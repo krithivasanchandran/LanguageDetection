@@ -1,0 +1,59 @@
+package com.locdata.realestate.commercialproperty.scraper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+// A total different requires to be take a copy of the html to the local
+
+public class RealEst_PremiumOutlet_LocData {
+
+static Set<String> esturl = new HashSet<String>();
+	
+	public static void main(String args[]) throws IOException {
+		
+		File input = new File("./temp/simon.html");
+		Document doc = Jsoup.parse(input, "UTF-8", "http://www.simon.com/mall");
+
+		Elements re = doc.select("main#simon");
+		
+		for(Element d : re){
+			Elements web = d.select(".col-xl-4.col-md-6");
+			for(Element n : web){
+				System.out.println("Website ----------> " + n.getElementsByTag("a").attr("href").concat("/about"));
+				esturl.add(n.getElementsByTag("a").attr("href").concat("/about"));
+			}
+		}
+			
+		if(esturl.size() > 0){
+			esturl.forEach((action) -> {
+				
+				Document document = ScraperLogic.Scraper.fetchHtmlContents(action);
+
+				CommonUtils.checkDoc(document,RealEst_PremiumOutlet_LocData.class);
+
+				Elements r = document.select("main#simon");
+				
+				for(Element ti : r){
+					
+					System.out.println("Address --------> " + ti.getElementsByTag("h5").text());
+				}
+				
+				String contact = document.getElementsByTag("aside").select(".aside-group").first().getElementsByTag("p").text();
+				System.out.println( "Phone --> " + contact);
+
+				Element email = document.select(".contact-email").first();
+				System.out.println("email --------> " + email.text());
+			});
+		}
+}
+}

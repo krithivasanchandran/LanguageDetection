@@ -1,0 +1,55 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.List;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+
+/*
+ * Using ajax to fetch the theatre details page URL : view-source:https://cineplex.com/search-2015?search-query=Scotiabank+Theatre
+ */
+
+public class Theatres_ScotiaBank_LocData {
+	
+	private static String[] pos = new String[100];
+	private static final List<String> symboltable = new ArrayList<String>(){{
+		add("{");
+		add("}");
+		add("[");
+		add("]");
+	}
+	private static String readAll(Reader rd) throws IOException {
+	    StringBuilder sb = new StringBuilder();
+	    int cp;
+	    while ((cp = rd.read()) != -1) {
+	      sb.append((char) cp);
+	    }
+	    return sb.toString();
+	  }
+public static void main(String args[]) throws IOException, InterruptedException {
+		
+		URL url = new URL("https://search.cineplex.com/api/Search/Get?query=Scotiabank%20Theatre&from=summary&[0].Count=1&[0].Type=Value&[0].Name=Language&[0].Value=English&lang=en-us");
+	      JsonParser jsonParser = new JsonParser();
+	      JsonObject jsonObject = (JsonObject)jsonParser.parse(new InputStreamReader(url.openStream(), Charset.forName("UTF-8")));
+	      String str = jsonObject.get("Summary").toString();
+	      String details = str.substring(str.indexOf("TheatreDetails"),str.indexOf("}}]", str.indexOf(str))).toString();
+	      int length=details.length();
+	      int i=0;
+	      while(i<length){
+	    	  if(symboltable.contains(details.charAt(index))){
+	    		  System.out.println(" Positions : " + details.charAt(index));
+	    	  }
+	      }
+}
+
+private static String Stack(){
+	int top = 0;
+	
+}
+}

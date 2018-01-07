@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.net.SocketTimeoutException"/>
+<fullyQualifiedTypeName name="com.locdata.scraper.main.ScraperLogic"/>
+<fullyQualifiedTypeName name="com.locdata.scraper.main.ScraperLogic.Scraper"/>
+<fullyQualifiedTypeName name="com.locdata.theatres.scraper.Theatres_Cinema21Indonesia_AggData"/>
+<fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
+<fullyQualifiedTypeName name="org.jsoup.nodes.Document"/>
+<fullyQualifiedTypeName name="com.locdata.utils.common.CommonUtils"/>
+<fullyQualifiedTypeName name="java.util.HashSet"/>
+<fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
+<fullyQualifiedTypeName name="com.google.gson.JsonArray"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.google.gson.stream.JsonReader"/>
+</qualifiedTypeNameHistroy>

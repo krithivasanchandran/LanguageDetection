@@ -1,0 +1,41 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class Theatres_Fridley_LocData {
+	
+	static List<String> theatreUrls = new ArrayList<String>();
+
+	public static void main(String args[]) throws IOException, InterruptedException {
+	
+			Document doc = ScraperLogic.Scraper.fetchHtmlContents("www.fridleytheatres.com/locations");
+	
+			CommonUtils.checkDoc(doc,Theatres_Fridley_LocData.class);
+
+			Elements e = doc.select("div#locations-list");
+			
+			e.forEach((a) -> {
+				Elements r = doc.select(".theatersname");
+				
+				r.forEach((link) -> {
+					
+					Elements url = link.select(".theaterlink");
+					
+					url.forEach((m) -> {
+						System.out.println(m.text());
+						System.out.println(" ----> " + m.select("a[href]").attr("href"));
+						theatreUrls.add(m.select("a[href]").attr("href"));
+					});
+				});
+			});
+	}
+
+}

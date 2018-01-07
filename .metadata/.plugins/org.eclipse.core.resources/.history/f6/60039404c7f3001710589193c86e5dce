@@ -1,0 +1,15 @@
+package com.locdata.ajax.request.response.builder;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class AjaxResponseBuilder {
+
+	public HttpURLConnection generateRequest(String sURL, long timeout){
+		
+		 URL url = new URL(sURL);
+         HttpURLConnection request = (HttpURLConnection) url.openConnection();
+         request.setReadTimeout(timeout);
+         request.connect();
+	}
+}

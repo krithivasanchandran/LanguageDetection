@@ -1,0 +1,57 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+
+public class Theatres_CineBistro_Aggdata {
+
+	public static void main(String args[]) throws IOException {
+
+		String parentUrl = "http://cinebistro.com";
+
+		Document doc = Jsoup.connect("http://cinebistro.com/about-cinebistro/index.php")
+				.userAgent(
+						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
+				.get();
+		
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.amctheatres.com/carmike");
+
+		if(doc == null){
+			System.out.println(" The link is broken ");
+            throw new IllegalArgumentException("Document !!! urls is null ::: Program Exited " + Theatres_CarMike_AggData.class.getSimpleName());
+		}
+		
+		Elements parentLocation = doc.select("div#content");
+
+		for (Element p : parentLocation) {
+
+			Elements ele = p.select(".twothirdCol.colorBg.rightChild");
+
+			ele.forEach((location) -> {
+
+				Elements t = location.select(".locationInfo");
+
+				t.forEach((f) -> {
+
+					System.out.println(
+							" -->href >>>>  " + parentUrl.concat(f.select("a").attr("href").replace("..", "")));
+
+					Elements r = f.getElementsByTag("p");
+
+					r.forEach((j) -> {
+						System.out.println(" ----------->  " + j.tagName("strong").text());
+					});
+
+				});
+			});
+
+		}
+	}
+}

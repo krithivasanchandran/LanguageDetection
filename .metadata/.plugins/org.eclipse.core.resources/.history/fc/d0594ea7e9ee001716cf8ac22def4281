@@ -1,0 +1,5 @@
+package com.locdata.theatres.scraper;
+
+public class Theatres_UnitedArtist_LocData {
+
+}

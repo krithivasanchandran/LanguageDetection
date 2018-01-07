@@ -1,0 +1,33 @@
+package com.XMLParser.LocData;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+public class XmlParser {
+	
+	 public static Document parseXml(String url)
+	            throws FileNotFoundException, ParserConfigurationException,
+	            SAXException, IOException {
+		 
+	        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+	                .newInstance();
+	        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+	        Document doc = docBuilder.parse(new URL(url).openStream());
+	        String xml = doc.getTextContent()";
+	        xml = xml.trim().replaceFirst("^([\\W]+)<","<");
+	        System.out.println(doc.getTextContent());
+	        return doc;
+	    }
+
+
+}

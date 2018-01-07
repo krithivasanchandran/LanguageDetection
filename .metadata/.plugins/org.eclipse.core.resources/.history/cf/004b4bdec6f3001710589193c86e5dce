@@ -1,0 +1,5 @@
+package com.locdata.ajax.request.response.builder;
+
+public class AjaxResponseBuilder {
+
+}

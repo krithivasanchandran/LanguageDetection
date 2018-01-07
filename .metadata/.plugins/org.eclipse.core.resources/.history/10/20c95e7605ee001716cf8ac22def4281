@@ -1,0 +1,55 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class Theatres_RegalCinemas_LocData {
+	
+	static List<String> theatreUrls = new ArrayList<String>();
+	
+	public static void main(String args[]) throws IOException, InterruptedException {
+		
+		String root = "https://www.regmovies.com";
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.regmovies.com/theater-list");
+
+		CommonUtils.checkDoc(doc, Theatres_RegalCinemas_LocData.class);
+
+		Elements e = doc.select(".content-container.venue-content-container");
+		
+		e.forEach((a) -> {
+				
+			for(Element peter : a.select(".grid.grid-2-col.grid-1-col-xs")){
+				
+				for(Element x : peter.select(".list-unstyled.state-venue-list")){
+						
+					for(Element inner : x.select("ul li a")){
+						System.out.println("Website ---> " + inner.attr("href"));
+						System.out.println(" Value ----> " + inner.text());
+						theatreUrls.add(root.concat(inner.attr("href")));
+					}
+				}
+			}
+			});
+		
+	theatreUrls.forEach((action) -> {
+		
+			System.out.println(" ===========> " + action);
+			Document document = ScraperLogic.Scraper.fetchHtmlContents(action);
+			CommonUtils.checkDoc(document, Theatres_Edwards_LocData.class);
+			Elements address = document.body().select(".info-cell .address");
+			Elements phone = document.body().select(".info-cell .phone");
+			System.out.println(address.text());
+			System.out.println(" Phone --->  " + phone.text());
+});
+}
+
+}

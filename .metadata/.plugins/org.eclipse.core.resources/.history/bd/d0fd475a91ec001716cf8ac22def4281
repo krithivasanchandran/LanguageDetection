@@ -1,0 +1,48 @@
+package com.locdata.theatres.scraper;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class Theatres_EImagine_LocData {
+	
+	static Set<String> websiteUrls = new HashSet<String>();
+	
+    static final Set<String> toVisit = new HashSet<String>(){{
+		add("http://www.emagine-entertainment.com/michigan/");
+		add("http://www.emagine-entertainment.com/minnesota/");
+		add("http://www.emagine-entertainment.com/illinois/");
+	}};
+	
+	public static void main(String args[]) {
+			
+			toVisit.parallelStream().forEach((action) -> {
+				
+				Document doc = ScraperLogic.Scraper.fetchHtmlContents(action);
+				CommonUtils.checkDoc(doc, Theatres_EImagine_LocData.class);
+
+				//Selecting the fourth table
+				Elements t = doc.select("div#theatre-listings");
+
+				for(Element p : t){
+					
+					Elements theatreUrl = p.select("theatre-row-item.col-xs-12.col-sm-6.col-md-4");
+					
+					theatreUrl.forEach((a) -> {
+						Elements tags = a.select("a");
+						
+						for(Element r : tags){
+								websiteUrls.add(r.attr("href"));
+						}
+					});
+				}
+			});
+
+   }
+}

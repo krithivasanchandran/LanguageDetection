@@ -1,0 +1,9 @@
+package com.locdata.Legal.TaxPrep;
+
+//H & R Block Canada
+
+// API - https://www.hrblock.ca/wp-admin/admin-ajax.php?lang=en&action=store_search&lat=53.52200970000001&lng=-113.52878670000001&max_results=1000&radius=50
+
+public class LegalTax_HRBlockCanada_LocData {
+
+}

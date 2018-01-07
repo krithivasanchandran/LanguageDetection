@@ -1,0 +1,16 @@
+package com.locdata.utils.common;
+
+import com.locdata.theatres.scraper.Theatres_CineplexEntertainment_LocData;
+
+public class CommonUtils {
+	
+	
+	public static checkDoc(Document document, Class parentClass)
+	{
+		if(document == null){
+			System.out.println(" The link is broken ");
+		    throw new IllegalArgumentException("Document !!! urls is null ::: Program Exited " + parentClass.getSimpleName());
+		}
+	}
+
+}

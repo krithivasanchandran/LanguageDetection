@@ -1,0 +1,32 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.Charset;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+public class Theatres_SilverCity_LocData {
+
+	private static String readAll(Reader rd) throws IOException {
+	    StringBuilder sb = new StringBuilder();
+	    int cp;
+	    while ((cp = rd.read()) != -1) {
+	      sb.append((char) cp);
+	    }
+	    return sb.toString();
+	  }
+public static void main(String args[]) throws IOException, InterruptedException {
+		
+		URL url = new URL("https://www.cineplex.com/Utilities/GetTheatresForAutocomplete?jsonp=jQuery110207441148221285268_1514717224891&lang=en&query=SilverCity&_=1514717224894");
+	      JsonParser jsonParser = new JsonParser();
+	      JsonObject jsonObject = (JsonObject)jsonParser.parse(new InputStreamReader(url.openStream(), Charset.forName("UTF-8")));
+	      String str = jsonObject.get("results").toString();
+	      String details = str.substring(str.indexOf("TheatreDetails"),str.indexOf("}}]", str.indexOf(str))).toString();
+	      System.out.println(details);
+}
+
+}

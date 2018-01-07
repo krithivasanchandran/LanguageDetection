@@ -1,0 +1,64 @@
+package com.locdata.realestate.commercialproperty.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class RealEst_TangerOutlets_LocData {
+
+static Set<String> esturl = new HashSet<String>();
+	
+	public static void main(String args[]) throws IOException {
+		
+		String parentUrl = "https://www.tangeroutlet.com";
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.tangeroutlet.com/locations");
+
+		CommonUtils.checkDoc(doc,RealEst_TangerOutlets_LocData.class);
+			
+		Elements t = doc.select("div#centerIndexList");
+		
+		for (Element r : t) {
+
+			Elements re = r.select(".row");
+			
+			for (Element k : re) {
+				
+				System.out.println("Address --->  "+ k.getElementsByTag("address").select(".centerLocation").text());
+				System.out.println(" Website ------> " + parentUrl.concat(k.getElementsByTag("address").attr("href")));
+				System.out.println(" Hours --------> " + k.getElementsByTag("dl").text());
+			}
+		}
+		
+		if(esturl.size() > 0){
+			esturl.forEach((action) -> {
+				
+				Document document = ScraperLogic.Scraper.fetchHtmlContents(action);
+
+				CommonUtils.checkDoc(document,RealEst_GeneralGrowth_LocData.class);
+
+				Elements r = document.select(".address-container");
+				
+				for(Element ti : r){
+					
+					System.out.println("Address --------> " + ti.getElementsByTag("p").text());
+				}
+				
+				Element contact = document.select(".contact-name").first();
+				System.out.println( "Name --> " + contact.text());
+				Element phone = document.select(".contact-phone").first();
+				System.out.println( "Phone --> " + phone.text());
+
+				Element email = document.select(".contact-email").first();
+				System.out.println("email --------> " + email.text());
+			});
+		}
+	}
+}

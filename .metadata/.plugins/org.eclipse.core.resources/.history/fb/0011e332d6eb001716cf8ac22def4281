@@ -1,0 +1,69 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import com.locdata.scraper.main.ScraperLogic;
+
+public class Theatres_CinemarkTheatres_LocData {
+	
+	static List<String> theatreUrls = new HashSet<String>();
+
+	public static void main(String args[]) throws IOException, InterruptedException {
+	
+			Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.fandango.com/movie-theaters/cinemark");
+	
+			if(doc == null){
+				System.out.println(" The link is broken ");
+			    throw new IllegalArgumentException("Document !!! urls is null ::: Program Exited " + Theatres_CinemarkTheatres_LocData.class.getSimpleName());
+			}
+			
+			Elements e = doc.select("div#GlobalBody_singleChain");
+			
+			e.forEach((a) -> {
+				Elements r = doc.select(".theatersname");
+				
+				r.forEach((link) -> {
+					
+					Elements url = link.select(".theaterlink");
+					
+					url.forEach((m) -> {
+						System.out.println(m.text());
+						System.out.println(" ----> " + m.select("a[href]").attr("href"));
+						theatreUrls.add(m.select("a[href]").attr("href"));
+					});
+				});
+			});
+			
+			if(theatreUrls.size() > 0){
+				theatreUrls.forEach((root) -> {
+					
+					Document document = ScraperLogic.Scraper.fetchHtmlContents(root);
+					
+					if(document == null){
+						System.out.println(" The link is broken ");
+					    throw new IllegalArgumentException("Document !!! urls is null ::: Program Exited " + Theatres_CinemarkTheatres_LocData.class.getSimpleName());
+					}
+					
+					System.out.println(" $$$$$$$$ " + document.text());
+					
+						Elements r = document.select(".tdp.js-tdp");
+						
+						r.forEach((link) -> {
+							
+							Elements url = link.select(".subnav__link-item.subnav__link-item--address");
+							
+							url.forEach((m) -> {
+								System.out.println(m.text());
+								System.out.println(" Phone number ---> " + m.select(".subnav__link-item").text());
+								System.exit(0);
+							});
+						});
+					});
+			}
+	}
+}
