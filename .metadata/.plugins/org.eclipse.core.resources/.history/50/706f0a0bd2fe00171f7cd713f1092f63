@@ -1,0 +1,128 @@
+package com.locdata.Legal.TaxPrep;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Comment;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
+
+import com.google.common.base.Splitter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class LegalTax_HRBlockUSA_LocData {
+	
+	private static String root = "https://www.hrblock.com";
+	private static Set<String> urls = new HashSet<String>();
+	private static Set<String> cityurls = new HashSet<String>();
+	private static Set<String> services = new LinkedHashSet<String>();
+	private static int counter = 0;
+
+
+	public static void main(String args[]) throws IOException {
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.hrblock.com/tax-offices/local/");
+		CommonUtils.checkDoc(doc, LegalTax_HRBlockUSA_LocData.class);
+
+		// USA Only
+		Element t = doc.select(".ol-states.clearfix").first();
+
+
+			Elements re = t.getElementsByTag("a");
+
+			re.parallelStream().forEach((action) -> {
+				urls.add(root.concat(action.attr("href")));
+			});
+			
+			urls.forEach((action) -> {
+				
+				Document document = ScraperLogic.Scraper.fetchHtmlContents(action);
+				CommonUtils.checkDoc(document, LegalTax_HRBlockUSA_LocData.class);
+				
+				Elements p = document.select(".ol-cities-group");
+				
+				p.parallelStream().forEach((t_1) -> {
+					Elements p_1 = t_1.select(".cities-list.clearfix");
+					for(Element o : p_1){
+						String cityUrl = o.getElementsByTag("a").attr("href");
+						cityurls.add(root.concat(cityUrl));
+					}
+				});
+
+			});
+			System.out.println(" Size of url is " + cityurls.size());
+			cityurls.parallelStream().forEach((a1) -> {
+				
+				Document document_1 = ScraperLogic.Scraper.fetchHtmlContents(a1);
+				CommonUtils.checkDoc(document_1, LegalTax_HRBlockUSA_LocData.class);
+				
+				Elements p_1 = document_1.select(".office-group");
+				for (Element r : p_1) {
+					List<Node> child = r.childNodes();
+					
+					for (Node n : child) {
+						if (n.nodeName().equals("#comment")) {
+							Comment comment = (Comment) n;
+							
+							Iterable<String> split= Splitter.onPattern("\r?\n").trimResults().omitEmptyStrings().split(comment.getData());
+
+							Iterator<String> itr = split.iterator();
+							
+							while(itr.hasNext()){
+							
+								String[] tokens = itr.next().trim().split("\\s{2,}");
+								for(int i=0;i<tokens.length;i+=2){
+									String s;
+									try{
+										s = tokens[i+1];
+									}catch(IndexOutOfBoundsException e ){
+										s = "NULL";	
+									}
+									System.out.println("  ------->  "  + tokens[i] + " ------> "  + s);
+									// Add these values to the map
+								}
+							}
+						}
+						counter++;
+						if(counter == 100) break;
+					}
+				}
+				for(Element tp : document_1.select(".tpf-office-info-non-mobile")){
+					//System.out.println(" Office URL  __+_+_________++++++-=============================> "+ root.concat(tp.getElementsByTag("a").attr("href")));
+					String innerOfficeUrl = root.concat(tp.getElementsByTag("a").attr("href"));
+					
+					Document document$ = ScraperLogic.Scraper.fetchHtmlContents(innerOfficeUrl);
+					CommonUtils.checkDoc(document$, LegalTax_HRBlockUSA_LocData.class);
+					
+					// Scrape for contents that office will has services provided for per office basis
+					Elements reel = document$.select(".services.visible-desktop");
+					for(Element g : reel){
+						Elements r1 = g.select(".accordion-wrap");
+						
+						for( Element cd : r1){
+							Elements fr = cd.select(".accordion-content");
+							for(Element as : fr){
+								Elements r2 = as.getElementsByTag("span");
+								for(Element r3 :r2){
+									System.out.println(" ---> " + r3.text());
+									services.add(r3.text());
+								}
+							}
+						}
+					}
+				}
+			});
+			
+			services.forEach((action$) -> {
+				System.out.println(" Services offered { { " + action$);
+			});
+		}
+}
