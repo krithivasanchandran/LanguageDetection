@@ -1,0 +1,14 @@
+package com.locdata.google.api.sheetsWriter;
+
+public class SheetLocalWriter {
+	
+public static void main(String[] args) throws IOException {
+		
+		writeXLSFile();
+		readXLSFile();
+		
+		writeXLSXFile();
+		readXLSXFile();
+
+	}
+}

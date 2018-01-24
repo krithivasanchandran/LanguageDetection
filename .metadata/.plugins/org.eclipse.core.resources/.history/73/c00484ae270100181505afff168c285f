@@ -1,0 +1,48 @@
+package com.locdata.google.api.sheetsWriter;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.LinkedHashSet;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+
+public class SheetLocalWriter {
+	
+	private static final String rootFilePath = "/Users/krichandran/Desktop/MasterData - Excel";
+public static void writeXLSXFile(String fileName,LinkedHashSet<GeoCodeEntityCarrierToExcelWriter> masterData) throws IOException {
+		
+		String excelFileName = rootFilePath.concat(fileName);//name of excel file
+		Date currentDate = new Date();
+		String sheetName = currentDate.getMonth()+"/"+currentDate.getDay()+"/"+currentDate.getYear();//name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName) ;
+
+		//iterating r number of rows
+		for (int r=0;r < masterData.size(); r++ )
+		{
+			XSSFRow row = sheet.createRow(r);
+
+			//iterating c number of columns
+			for (int c=0;c < 13; c++ )
+			{
+				XSSFCell cell = row.createCell(c);
+	
+				cell.setCellValue("Cell "+r+" "+c);
+			}
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		//write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+	}
+}

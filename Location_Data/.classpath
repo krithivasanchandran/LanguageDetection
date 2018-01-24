@@ -51,5 +51,34 @@
 	<classpathentry kind="lib" path="/Users/krichandran/Desktop/jaxrs-ri/ext/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="lib" path="/Users/krichandran/Desktop/jaxrs-ri/ext/yasson-1.0.jar"/>
 	<classpathentry kind="lib" path="/Users/krichandran/Desktop/jackson-all-1.9.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-android-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-appengine-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-gson-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-jackson2-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-java6-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-api-client-servlet-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-http-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-http-client-android-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-http-client-appengine-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-http-client-gson-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-http-client-jackson2-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-http-client-jdo-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-oauth-client-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-oauth-client-appengine-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-oauth-client-java6-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-oauth-client-jetty-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/google-oauth-client-servlet-1.23.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/gson-2.1.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/httpclient-4.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/httpcore-4.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/jackson-core-2.1.3.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/jdo2-api-2.3-eb.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/jetty-6.1.26.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/jetty-util-6.1.26.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/jsr305-1.3.9.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/libs/transaction-api-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/google-api-services-sheets-v4-rev500-1.23.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

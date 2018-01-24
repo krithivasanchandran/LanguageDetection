@@ -3,18 +3,18 @@ package com.locdata.theatres.scraper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
 import com.locdata.geocoding.google.service.GeoCodingApi;
-import com.locdata.geocoding.google.service.GeoCodingJsonResponse;
-import com.locdata.geocoding.google.service.GeoCodingJsonResponse.Result;
-import com.locdata.geocoding.google.service.GeoCodingStatusCodes;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.theatres.entity.EntityTheatre;
 import com.locdata.utils.common.CommonUtils;
@@ -24,6 +24,7 @@ public class Theatres_AMCEntertainment_AggData {
 
 	static List<String> theatres = new ArrayList<String>();
 	static List<EntityTheatre> address = new ArrayList<EntityTheatre>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> amcKeyDataSet = new LinkedHashSet<GeoCodeEntityCarrierToExcelWriter>();
 
 	public static void main(String args[]) throws IOException {
 
@@ -45,10 +46,8 @@ public class Theatres_AMCEntertainment_AggData {
 				System.out.println(parentUrl.concat(k.attr("href")));
 				theatres.add(parentUrl.concat(k.attr("href")));
 				System.out.println(k.text());
-				break;
 				// address.add(new EntityTheatre().setCountyName(k.text()));
 			}
-			break;
 		}
 
 		ListIterator<String> itr = theatres.listIterator();
@@ -74,33 +73,19 @@ public class Theatres_AMCEntertainment_AggData {
 						" ==============> address " + e.select(".TheatreInfo-address.Headline--eyebrow").text());
 				entity.setAddress(e.select(".TheatreInfo-address.Headline--eyebrow").text());
 				
-				GeoCodingApi geo = new GeoCodingApi(entity.getAddress());
-				//System.out.println(geo.fireGeoCodeApi());
-				 String returnJsonGeo = geo.fireGeoCodeApi();
-				ObjectMapper mapper = new ObjectMapper();
-				GeoCodingJsonResponse georesponse = mapper.readValue(returnJsonGeo, GeoCodingJsonResponse.class);
-				System.out.println(" Size of results -----> " + georesponse.getResults().size());
-				System.out.println(georesponse);
-				Result result = georesponse.getResults().get(0);
-				System.out.println(result.toString());
-				
-				        	        System.out.println( " formatted Json response " +  result.getFormattedAddress());
-				        	        System.out.println( " latitude :: " + result.getGeometry().getLocation().getLat());
-				        	        System.out.println( " longitude :: " + result.getGeometry().getLocation().getLng());
-				        	        System.out.println( " location_type :: " + result.getGeometry().getLocationType());
-				        	        System.out.println(" Place Id ::: " + result.getPlaceId());
-				        	        System.out.println(" Status ::: " + georesponse.getStatus());
-				        	        
-				        	        if(GeoCodingStatusCodes.getErrorCodes().contains(georesponse.getStatus().trim())){
-				        	        	String str = georesponse.getStatus().trim();
-				        	        	System.out.println( " Ennum response  " + GeoCodingStatusCodes.valueOf(str).name());
-				        	        } 
+				GeoCodingApi geo = new GeoCodingApi(entity.getAddress(),amcKeyDataSet);
+					
+						amcKeyDataSet.forEach((action) ->{
+							StringBuilder builder = new StringBuilder();
+							builder.append(action.getAddress() + " --> " + action.getCity() + " --> " + action.getCountry() + " --> " + action.getCountryCode() + " --> " + action.getCounty()
+							+ " --> " + action.getLatitude() + " --> " + action.getLongitude() +" --> " + action.getState() + " --> " + action.getZipcode());
+							System.out.println(" builder ::::  " + builder.toString());
+						});
+						
+				}
 				        	
-				System.exit(0);
 			//	address.add(entity);
-			}
 		}
-		System.out.println("Fetching the details");
-		System.out.println(Arrays.toString(address.toArray()));
+		SheetLocalWriter.writeXLSXFile("AmcEntertainment.xlsx",amcKeyDataSet);
 	}
 }

@@ -7,13 +7,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
 
 public class Theatres_Edwards_LocData {
 	
 	static Set<String> websiteUrls = new HashSet<String>();
-	
+	public static Set<GeoCodeEntityCarrierToExcelWriter> edwardsKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
 public static void main(String args[]) {
 		
 		String root = "https://www.regmovies.com";
@@ -44,10 +48,27 @@ public static void main(String args[]) {
 			Document document = ScraperLogic.Scraper.fetchHtmlContents(tbag);
 			CommonUtils.checkDoc(document, Theatres_Edwards_LocData.class);
 			Elements address = document.body().select(".info-cell .address");
+			
+			try {
+				String addr = address.text().replace("view on google maps", "");
+				GeoCodingApi geo = new GeoCodingApi(addr,edwardsKeyDataSet);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			Elements phone = document.body().select(".info-cell .phone");
 			System.out.println(address.text());
 			System.out.println(" Phone --->  " + phone.text());
 			
+			
+			
 		});
+		try {
+			SheetLocalWriter.writeXLSXFile("EdwardsTheatre.xlsx",edwardsKeyDataSet);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}	
 }

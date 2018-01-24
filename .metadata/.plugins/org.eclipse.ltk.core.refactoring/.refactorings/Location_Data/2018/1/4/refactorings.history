@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;client_id.json&apos; to &apos;Location_Data/src\main\java/com.locdata.utils.common&apos;&#x0A;- Original project: &apos;Location_Data&apos;&#x0A;- Destination element: &apos;Location_Data/src\main\java/com.locdata.utils.common&apos;&#x0A;- Original element: &apos;client_id.json&apos;&#x0A;- Update references to refactored element" description="Move file" destination="/src\\main\\java&lt;com.locdata.utils.common" element1="credentials/client_id.json" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1516811790090" units="0" version="1.0"/>
+</session>

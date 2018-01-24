@@ -150,12 +150,14 @@ public class GeoCodingJsonResponse {
 	@JsonIgnoreProperties(ignoreUnknown = true )
 	public static class Location
 	{
+      @JsonProperty("lat")	
 	  private double lat;
 
 	  public double getLat() { return this.lat; }
 
 	  public void setLat(double lat) { this.lat = lat; }
-
+	  
+	  @JsonProperty("lng")
 	  private double lng;
 
 	  public double getLng() { return this.lng; }
@@ -245,6 +247,7 @@ public class GeoCodingJsonResponse {
 	@JsonIgnoreProperties(ignoreUnknown = true )
 	public static class Result
 	{
+	  @JsonProperty("address_components")
 	  private ArrayList<AddressComponent> address_components;
 
 	  public ArrayList<AddressComponent> getAddressComponents() { return this.address_components; }

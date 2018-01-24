@@ -2,14 +2,18 @@ package com.locdata.theatres.scraper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.theatres.entity.EntityTheatre;
 import com.locdata.utils.common.CommonUtils;
@@ -18,6 +22,7 @@ public class Theatres_BowTieCinemas_AggData {
 
 	static List<EntityTheatre> address = new ArrayList<EntityTheatre>();
 	static List<EntityTheatre> entityCoupler = new ArrayList<EntityTheatre>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> bowTieKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 
 	public static void main(String args[]) throws IOException {
 
@@ -100,14 +105,18 @@ public class Theatres_BowTieCinemas_AggData {
 			System.out.println("contains null or empty elements ");
 		}
 
-		// for(int i=0; i < entityCoupler.size() ; i++)
-		// {
-		// System.out.println(" ===== > " +
-		// entityCoupler.get(i).getTheatreWebsite());
-		// System.out.println("----------> " +
-		// entityCoupler.get(i).getAddress());
-		// System.out.println(" $$$$$$$ " +
-		// entityCoupler.get(i).getPhoneNumber());
-		// }
+		 for(int i=0; i < entityCoupler.size() ; i++)
+		{
+			 GeoCodingApi geo = new GeoCodingApi(entityCoupler.get(i).getAddress(),bowTieKeyDataSet);
+				
+		 System.out.println(" ===== > " +
+		 entityCoupler.get(i).getTheatreWebsite());
+		 System.out.println("----------> " +
+		 entityCoupler.get(i).getAddress());
+		 System.out.println(" $$$$$$$ " +
+		 entityCoupler.get(i).getPhoneNumber());
+		 }
+		
+		SheetLocalWriter.writeXLSXFile("BowTieEntertainment.xlsx",bowTieKeyDataSet);
 	}
 }
