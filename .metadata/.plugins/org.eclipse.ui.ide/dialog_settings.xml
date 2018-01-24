@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="installedFeatures">
+		<item value="com.ianbrandt.tools.m2e.mdp.feature:0.0.4.201409291703"/>
 		<item value="com.mountainminds.eclemma.feature:2.3.0.201403192240"/>
 		<item value="edu.umd.cs.findbugs.plugin.eclipse:3.0.1.20150306-5afe4d1"/>
 		<item value="net.sf.eclipsecs:6.8.0.201507251301"/>

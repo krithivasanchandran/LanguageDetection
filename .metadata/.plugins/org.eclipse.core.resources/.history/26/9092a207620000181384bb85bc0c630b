@@ -1,0 +1,21 @@
+package com.locdata.geocoding.google.service;
+
+public enum GeoCodingStatusCodes {
+	
+	OK("OK", 1), IN_ACTIVE("In Active", 2);
+
+    private final String key;
+    private final String value;
+
+    GeoCodingStatusCodes(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+    public Integer getValue() {
+        return value;
+    }
+}

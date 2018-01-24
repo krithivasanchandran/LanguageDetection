@@ -15,6 +15,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+/*
+ * Default sheet number - 1
+ * Excel file name
+ * 
+ */
+
 public class ExcelReader {
 	
 	 public static Iterator<Row> excelRead(String FILE_NAME, int sheetNumber) throws EncryptedDocumentException, InvalidFormatException {

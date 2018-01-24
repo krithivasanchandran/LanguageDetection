@@ -1,5 +1,0 @@
-package com.locdata.ingest.excel;
-
-public class ExcelReader {
-
-}

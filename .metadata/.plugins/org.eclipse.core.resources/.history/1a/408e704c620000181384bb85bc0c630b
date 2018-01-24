@@ -1,0 +1,23 @@
+package com.locdata.geocoding.google.service;
+
+public enum GeoCodingStatusCodes {
+	
+	OK("OK", "SUCCESS"),
+	ZERO_RESULTS("ZERO_RESULTS", "Indicates that the geocode was successful but returned no results. This may occur if the geocoder was passed a non-existent address."),
+	;
+
+    private final String key;
+    private final String value;
+
+    GeoCodingStatusCodes(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+    public String getValue() {
+        return value;
+    }
+}

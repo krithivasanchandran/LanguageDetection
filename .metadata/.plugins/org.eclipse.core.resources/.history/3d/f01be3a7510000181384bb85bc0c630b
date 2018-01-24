@@ -1,0 +1,7 @@
+package com.locdata.geocoding.google.service;
+
+public class GeoCodingApi {
+	
+	private static final String geocoding = "https://maps.googleapis.com/maps/api/geocode/outputFormat?parameter";
+
+}

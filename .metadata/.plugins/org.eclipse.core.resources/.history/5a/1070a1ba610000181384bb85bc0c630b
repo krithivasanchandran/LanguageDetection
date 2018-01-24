@@ -1,0 +1,5 @@
+package com.locdata.geocoding.google.service;
+
+public enum GeoCodingStatusCodes {
+
+}
