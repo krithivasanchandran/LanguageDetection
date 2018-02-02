@@ -2,11 +2,16 @@ package com.locdata.theatres.scraper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
 
@@ -17,6 +22,7 @@ import com.locdata.utils.common.CommonUtils;
 public class Theatres_Santikos_LocData {
 	
 	static List<String> theatreUrls = new ArrayList<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> santikosKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 
 	public static void main(String args[]) throws IOException, InterruptedException {
 	
@@ -47,6 +53,12 @@ public class Theatres_Santikos_LocData {
 					Document document = ScraperLogic.Scraper.fetchHtmlContents(root);
 					
 					CommonUtils.checkDoc(document,Theatres_Santikos_LocData.class);
+					
+					final GeoCodeEntityCarrierToExcelWriter g = new GeoCodeEntityCarrierToExcelWriter();
+					
+					String storename  = root.split("com/")[1].split("_")[0];
+					System.out.println(" Store name  -------------> " + storename);
+					g.setStorename(storename);
 										
 						Elements r = document.select(".tdp.js-tdp");
 						
@@ -56,10 +68,19 @@ public class Theatres_Santikos_LocData {
 							
 							url.forEach((m) -> {
 								System.out.println(m.text());
+								g.setAddress(m.text());
 								System.out.println(" Phone number ---> " + link.select(".subnav__link-item").last().text());
+								g.setPhoneNumber(link.select(".subnav__link-item").last().text());
 							});
 						});
+						try {
+							new GeoCodingApi(g.getAddress(), g);
+						} catch (Exception e1) {
+						   System.out.println(e1.getMessage());
+						}
+						santikosKeyDataSet.add(g);
 					});
 			}
+			SheetLocalWriter.writeXLSXFile("SantikosTheatre.xlsx",santikosKeyDataSet);
 	}
 }

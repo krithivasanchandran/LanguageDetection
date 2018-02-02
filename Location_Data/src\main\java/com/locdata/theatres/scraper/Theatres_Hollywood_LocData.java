@@ -2,11 +2,16 @@ package com.locdata.theatres.scraper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
 
@@ -19,6 +24,7 @@ import com.locdata.utils.common.CommonUtils;
 public class Theatres_Hollywood_LocData {
 	
 	static List<String> theatreUrls = new ArrayList<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> hollywoodKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 
 	public static void main(String args[]) throws IOException, InterruptedException {
 	
@@ -52,7 +58,12 @@ public class Theatres_Hollywood_LocData {
 					Document document = ScraperLogic.Scraper.fetchHtmlContents(root);
 					
 					CommonUtils.checkDoc(document,Theatres_Hollywood_LocData.class);
-										
+					
+					final GeoCodeEntityCarrierToExcelWriter g = new GeoCodeEntityCarrierToExcelWriter();
+
+					String storeName = root.substring(root.indexOf(".com/",0)+".com/".length(), root.indexOf("_"));
+				     g.setStorename(storeName);
+				     
 						Elements r = document.select(".tdp.js-tdp");
 						
 						r.forEach((link) -> {
@@ -61,10 +72,19 @@ public class Theatres_Hollywood_LocData {
 							
 							url.forEach((m) -> {
 								System.out.println(m.text());
+								g.setAddress(m.text());
 								System.out.println(" Phone number ---> " + link.select(".subnav__link-item").last().text());
+								g.setPhoneNumber(link.select(".subnav__link-item").last().text());
 							});
 						});
+						try {
+							new GeoCodingApi(g.getAddress(), g);
+							hollywoodKeyDataSet.add(g);
+						} catch (Exception e1) {
+							System.out.println(e1.getMessage());
+						}
 					});
+				SheetLocalWriter.writeXLSXFile("HollywoodTheatre.xlsx",hollywoodKeyDataSet);
 			}
 	}
 }

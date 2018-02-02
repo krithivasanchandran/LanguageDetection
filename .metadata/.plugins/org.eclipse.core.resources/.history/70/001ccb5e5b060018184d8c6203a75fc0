@@ -1,0 +1,17 @@
+package com.locdata.theatres.jaxb.schema;
+
+public class AMCJaxbSchema {
+	
+	private Url url;
+
+    public Url getUrl ()
+    {
+        return url;
+    }
+
+    public void setUrl (Url url)
+    {
+        this.url = url;
+    }
+
+}

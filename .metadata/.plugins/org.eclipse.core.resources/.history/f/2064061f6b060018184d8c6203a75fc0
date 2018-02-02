@@ -1,0 +1,181 @@
+package com.locdata.theatres.jaxb.schema;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name="AMCJaxbSchema")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class AMCJaxbSchema {
+	
+	@XmlElement
+	private Url url;
+
+	@XmlElement(name="url")
+    public Url getUrl ()
+    {
+        return url;
+    }
+
+    public void setUrl (Url url)
+    {
+        this.url = url;
+    }
+    
+    public static class Url
+    {
+    	 @XmlElement
+        private String priority;
+
+    	 @XmlElement
+        private String changefreq;
+
+    	 @XmlElement
+        private String loc;
+
+    	 @XmlElement
+        private PageMap PageMap;
+
+    		@XmlElement(name="priority")
+
+        public String getPriority ()
+        {
+            return priority;
+        }
+
+        public void setPriority (String priority)
+        {
+            this.priority = priority;
+        }
+        
+    	@XmlElement(name="changefreq")
+        public String getChangefreq ()
+        {
+            return changefreq;
+        }
+
+        public void setChangefreq (String changefreq)
+        {
+            this.changefreq = changefreq;
+        }
+
+    	@XmlElement(name="loc")
+        public String getLoc ()
+        {
+            return loc;
+        }
+
+        public void setLoc (String loc)
+        {
+            this.loc = loc;
+        }
+
+    	@XmlElement(name="PageMap")
+        public PageMap getPageMap ()
+        {
+            return PageMap;
+        }
+
+        public void setPageMap (PageMap PageMap)
+        {
+            this.PageMap = PageMap;
+        }
+    }
+    
+    public static class PageMap
+    {
+    	 @XmlElement
+        private DataObject[] DataObject;
+
+    	 @XmlElement
+        private String xmlns;
+
+     	@XmlElement(name="DataObject")
+        public DataObject[] getDataObject ()
+        {
+            return DataObject;
+        }
+
+        public void setDataObject (DataObject[] DataObject)
+        {
+            this.DataObject = DataObject;
+        }
+
+     	@XmlElement(name="xmlns")
+        public String getXmlns ()
+        {
+            return xmlns;
+        }
+
+        public void setXmlns (String xmlns)
+        {
+            this.xmlns = xmlns;
+        }
+
+    }
+    
+    public static class DataObject
+    {
+    	 @XmlElement
+        private Attribute[] Attribute;
+
+    	 @XmlElement
+        private String type;
+
+      	@XmlElement(name="Attribute")
+        public Attribute[] getAttribute ()
+        {
+            return Attribute;
+        }
+
+        public void setAttribute (Attribute[] Attribute)
+        {
+            this.Attribute = Attribute;
+        }
+
+      	@XmlElement(name="type")
+        public String getType ()
+        {
+            return type;
+        }
+
+        public void setType (String type)
+        {
+            this.type = type;
+        }
+
+    }
+    
+    public static class Attribute
+    {
+    	 @XmlElement
+        private String content;
+
+    	 @XmlElement
+        private String name;
+       
+    	@XmlElement(name="content")
+        public String getContent ()
+        {
+            return content;
+        }
+
+        public void setContent (String content)
+        {
+            this.content = content;
+        }
+
+        public String getName ()
+        {
+            return name;
+        }
+
+        public void setName (String name)
+        {
+            this.name = name;
+        }
+    }
+    	
+
+}

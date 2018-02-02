@@ -8,6 +8,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
 
@@ -18,6 +21,7 @@ import com.locdata.utils.common.CommonUtils;
 public class Theatres_CineplexEntertainment_LocData {
 	
 	static Set<String> loc_data = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> cineplexKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 	
 	public static void main(String args[]) throws IOException, InterruptedException {
 
@@ -53,6 +57,10 @@ public class Theatres_CineplexEntertainment_LocData {
 			Document document = ScraperLogic.Scraper.fetchHtmlContents("https://www.cineplex.com/Theatres/TheatreListings?LocationURL="+action+"&Range=50");
 
 			CommonUtils.checkDoc(document,Theatres_CineplexEntertainment_LocData.class);
+			
+			final GeoCodeEntityCarrierToExcelWriter cineplexMasterData = new GeoCodeEntityCarrierToExcelWriter();
+			
+			cineplexMasterData.setStorename(action);
 		
 			Elements t = document.body().select("div#Wrapper");
 			
@@ -64,8 +72,16 @@ public class Theatres_CineplexEntertainment_LocData {
 								
 								System.out.println(" Address ------> " + q.select(".theatre-address").text());
 								System.out.println("  $$$$ "  + q.getElementsByAttributeValue("itemprop", "telephone").text());
+								cineplexMasterData.setPhoneNumber(q.getElementsByAttributeValue("itemprop", "telephone").text());
+								try {
+									new GeoCodingApi(q.select(".theatre-address").text(),cineplexMasterData);
+								} catch (Exception e1) {
+									System.out.println(" Exception Printed !!! ");
+								}
 					}
 				});
+			cineplexKeyDataSet.add(cineplexMasterData);
 		});
+		  SheetLocalWriter.writeXLSXFile("CineplexTheatres.xlsx",cineplexKeyDataSet);
 	}
 }

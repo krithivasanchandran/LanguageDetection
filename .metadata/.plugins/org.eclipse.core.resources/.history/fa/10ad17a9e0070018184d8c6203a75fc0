@@ -1,0 +1,69 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * Small Theatre Locations (6) can be manually crawled
+ */
+
+public class Theatres_Pacific_LocData {
+	
+	public static Set<GeoCodeEntityCarrierToExcelWriter> pacificKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	
+public static void main(String args[]) throws IOException, InterruptedException {
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents("http://www.pacifictheatres.com/all-locations/");
+
+		CommonUtils.checkDoc(doc,Theatres_Pacific_LocData.class);
+
+		Elements e = doc.select(".entry-content");
+		
+		e.forEach((a) -> {
+				
+			for(Element peter : a.getElementsByTag("table")){
+				for(Element x : peter.select("tr td div")){
+					
+					final GeoCodeEntityCarrierToExcelWriter g = new GeoCodeEntityCarrierToExcelWriter();
+
+					if(x.text().isEmpty()) continue;
+					System.out.println("Website ---> " + x.select("a").attr("href"));
+					String storename = x.select("a").attr("href");
+					String address = x.text().split("Ticketing Info:")[0];
+					String raw = x.text().split("Ticketing Info:")[1];
+					
+					Pattern pattern = Pattern.compile("\\(\\d{3}\\)\\s\\d{3}-\\d{4}");
+					Matcher matcher = pattern.matcher(raw);
+
+					if (matcher.find()) {
+							System.out.println(" Phone number ----------> " + matcher.group(0));
+							g.setPhoneNumber(matcher.group(0));
+							g.setPhoneNumber(","+raw.split("Guest Services:")[1]);
+							
+							try {
+								new GeoCodingApi(g.getAddress(), g);
+							} catch (Exception e1) {
+							   System.out.println(e1.getMessage());
+							}
+					}
+					pacificKeyDataSet.add(g);
+					System.out.println("Address " + x.text());
+				}
+			}
+			});
+		SheetLocalWriter.writeXLSXFile("GeorgiaTheatre.xlsx",georgiaKeyDataSet);
+}
+}

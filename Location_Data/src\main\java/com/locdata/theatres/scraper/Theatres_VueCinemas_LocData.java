@@ -1,5 +1,6 @@
 package com.locdata.theatres.scraper;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,14 +8,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
 
 public class Theatres_VueCinemas_LocData {
 	
 	static Set<String> loc_data = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> vueCinemasKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 
-	public static void main(String args[]){
+	public static void main(String args[]) throws IOException{
 		
 		String root = "http://www.cinema-finder.co.uk/cat/vue-cinemas/";
 		final Set<String> toVisit = new HashSet<String>(){{
@@ -59,9 +64,16 @@ public class Theatres_VueCinemas_LocData {
 					 
 					     Element inner = q.select(".item-address").tagName("dd").first();
 						 System.out.println(" Address ------> " +inner.text());
+						 try {
+							new GeoCodingApi(inner.text(),vueCinemasKeyDataSet);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
 						 //System.out.println(" Phone number ------- > " + q.select(".item-address").tagName("dd").get(1));
 				}
 				});
 		});
+		SheetLocalWriter.writeXLSXFile("VueCinemasEntertainment.xlsx",vueCinemasKeyDataSet);
 	}
 }

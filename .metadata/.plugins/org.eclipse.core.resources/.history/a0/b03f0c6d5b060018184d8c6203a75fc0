@@ -1,0 +1,74 @@
+package com.locdata.theatres.jaxb.schema;
+
+public class AMCJaxbSchema {
+	
+	private Url url;
+
+    public Url getUrl ()
+    {
+        return url;
+    }
+
+    public void setUrl (Url url)
+    {
+        this.url = url;
+    }
+    
+    public static class Url
+    {
+        private String priority;
+
+        private String changefreq;
+
+        private String loc;
+
+        private PageMap PageMap;
+
+        public String getPriority ()
+        {
+            return priority;
+        }
+
+        public void setPriority (String priority)
+        {
+            this.priority = priority;
+        }
+
+        public String getChangefreq ()
+        {
+            return changefreq;
+        }
+
+        public void setChangefreq (String changefreq)
+        {
+            this.changefreq = changefreq;
+        }
+
+        public String getLoc ()
+        {
+            return loc;
+        }
+
+        public void setLoc (String loc)
+        {
+            this.loc = loc;
+        }
+
+        public PageMap getPageMap ()
+        {
+            return PageMap;
+        }
+
+        public void setPageMap (PageMap PageMap)
+        {
+            this.PageMap = PageMap;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "ClassPojo [priority = "+priority+", changefreq = "+changefreq+", loc = "+loc+", PageMap = "+PageMap+"]";
+        }
+    }
+
+}

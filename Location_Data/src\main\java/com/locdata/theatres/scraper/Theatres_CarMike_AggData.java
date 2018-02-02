@@ -11,12 +11,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
+
+import javassist.bytecode.analysis.Util;
 
 /*
  * Car Mike Cinemas will be rebranded to AMC Theatres Now
  * 
+ * Parent List - AMC Entertainment - Store Number and Store Name from there
  * 
  */
 
@@ -24,6 +30,8 @@ public class Theatres_CarMike_AggData {
 
 	static List<String> urlVisits = new ArrayList<String>();
 	static Set<String> address = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> carMikeKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	public static boolean criticalThrowException = false;
 
 	public static void main(String args[]) throws IOException {
 
@@ -60,21 +68,31 @@ public class Theatres_CarMike_AggData {
 					Document visitPage = ScraperLogic.Scraper.fetchHtmlContents(url);
 
 					CommonUtils.checkDoc(visitPage,Theatres_CarMike_AggData.class);
+					final GeoCodeEntityCarrierToExcelWriter masterObject = new GeoCodeEntityCarrierToExcelWriter();
+					if(visitPage != null){
+						
+						Elements pin = visitPage.select(".SiteContent");
 
-					Elements pin = visitPage.select(".SiteContent");
+						for (Element e : pin) {
 
-					for (Element e : pin) {
+							Elements getplace = e.select("p.Headline--sub");
 
-						Elements getplace = e.select("p.Headline--sub");
+							System.out.println(" website ==> " + url);
 
-						System.out.println(" website ==> " + url);
-
-						getplace.forEach((p_12) -> {
-							System.out.println(" -----> " + p_12.text());
-							address.add(p_12.text());
-						});
+							getplace.forEach((p_12) -> {
+								System.out.println(" -----> " + p_12.text());
+								 try {
+									new GeoCodingApi(p_12.text(),masterObject);
+								} catch (Exception e1) {
+									e1.printStackTrace();
+								}
+								address.add(p_12.text());
+							});
+						}
+						carMikeKeyDataSet.add(masterObject);
+					
 					}
-
+ 
 				} catch (Exception e1) {
 
 					System.out.println(e1.getMessage());
@@ -83,5 +101,6 @@ public class Theatres_CarMike_AggData {
 			}));
 		}
 		address.forEach((i) -> System.out.println(" ====> " + i));
+		SheetLocalWriter.writeXLSXFile("CarMike.xlsx",carMikeKeyDataSet);
 	}
 }

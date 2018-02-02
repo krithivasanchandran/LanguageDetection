@@ -32,10 +32,6 @@ public class XmlParser {
 	        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 	        Document doc = docBuilder.parse(conn.getInputStream(),"UTF-8");
 	        
-	        DOMSource domSource = new DOMSource(doc);
-	        TransformerFactory tf = TransformerFactory.newInstance();
-	        Transformer transformer = tf.newTransformer();
-
 	        
 	        //String xml = doc.getTextContent();
 	        //xml = xml.trim().replaceFirst("^([\\W]+)<","<");

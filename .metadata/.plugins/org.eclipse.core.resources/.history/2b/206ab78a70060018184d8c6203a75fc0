@@ -1,0 +1,5 @@
+package com.locdata.theatres.jaxb.schema;
+
+public class Url {
+
+}

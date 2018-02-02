@@ -1,0 +1,33 @@
+package com.locdata.theatres.jaxb.schema;
+
+import javax.xml.bind.annotation.XmlElement;
+
+public class Attribute {
+	
+	  private String content;
+
+      private String name;
+     
+  	@XmlElement(name="content")
+      public String getContent ()
+      {
+          return content;
+      }
+
+      public void setContent (String content)
+      {
+          this.content = content;
+      }
+
+  	@XmlElement(name="name")
+      public String getName ()
+      {
+          return name;
+      }
+
+      public void setName (String name)
+      {
+          this.name = name;
+      }
+
+}

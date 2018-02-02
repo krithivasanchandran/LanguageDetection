@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.net.SocketTimeoutException"/>
 <fullyQualifiedTypeName name="com.locdata.scraper.main.ScraperLogic"/>
 <fullyQualifiedTypeName name="com.locdata.scraper.main.ScraperLogic.Scraper"/>
@@ -8,7 +7,6 @@
 <fullyQualifiedTypeName name="org.jsoup.nodes.Document"/>
 <fullyQualifiedTypeName name="com.locdata.utils.common.CommonUtils"/>
 <fullyQualifiedTypeName name="java.util.HashSet"/>
-<fullyQualifiedTypeName name="com.google.gson.JsonArray"/>
 <fullyQualifiedTypeName name="com.google.gson.stream.JsonReader"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Document"/>
 <fullyQualifiedTypeName name="com.XMLParser.LocData.XmlParser"/>
@@ -24,10 +22,22 @@
 <fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Node"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Attributes"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Comment"/>
 <fullyQualifiedTypeName name="org.apache.poi.hssf.usermodel.HSSFWorkbook"/>
 <fullyQualifiedTypeName name="java.io.OutputStreamWriter"/>
 <fullyQualifiedTypeName name="java.util.concurrent.atomic.AtomicInteger"/>
+<fullyQualifiedTypeName name="com.google.gson.JsonArray"/>
+<fullyQualifiedTypeName name="com.locdata.geocoding.google.service.GeoCodingJsonResponse"/>
+<fullyQualifiedTypeName name="com.locdata.geocoding.google.service.GeoCodingJsonResponse.Result"/>
+<fullyQualifiedTypeName name="com.sun.research.ws.wadl.Include"/>
+<fullyQualifiedTypeName name="org.apache.xmlbeans.impl.xb.xsdschema.IncludeDocument.Include"/>
+<fullyQualifiedTypeName name="com.locdata.geocoding.google.service.GeoCodingJsonResponse.AddressComponent"/>
+<fullyQualifiedTypeName name="java.lang.Object"/>
+<fullyQualifiedTypeName name="com.locdata.geocoding.google.service.GeoPlacesApiJsonResponse.Result"/>
+<fullyQualifiedTypeName name="com.locdata.geocoding.google.service.GeoPlacesApiJsonResponse.AddressComponent"/>
+<fullyQualifiedTypeName name="com.locdata.geocoding.google.service.GeoPlacesApiJsonResponse"/>
+<fullyQualifiedTypeName name="com.google.api.client.util.Data"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>

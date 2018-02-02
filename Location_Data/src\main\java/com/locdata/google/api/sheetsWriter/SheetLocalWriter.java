@@ -26,75 +26,137 @@ public class SheetLocalWriter {
 		String sheetName = dtf.format(localDate);//name of sheet
 
 		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet(sheetName) ;
+		XSSFSheet sheet = wb.createSheet(sheetName);
 		List<GeoCodeEntityCarrierToExcelWriter> masterlist = new ArrayList<GeoCodeEntityCarrierToExcelWriter>(masterData);
 		for(GeoCodeEntityCarrierToExcelWriter w: masterlist){
 			System.out.println("Copied Cell contents are  " + w.getAddress());
 			System.out.println(w.getCountry());
 			System.out.println("Set size are :::: " + masterlist.size());
 		}
+		
+			XSSFRow row_1 = sheet.createRow(0);
+			for (int c=0;c < 14; c++ )
+			{
+				XSSFCell cell = row_1.createCell(c);
+				
+				switch(c) {
+				case 0:
+					cell.setCellValue("Store ID");
+				
+				case 1:
+					cell.setCellValue("Store Name");
+					break;
+					
+				case 2: 
+					cell.setCellValue("Address");
+					break;
+				
+				case 3:
+					cell.setCellValue("City");
+					break;
+				
+				case 4:
+					cell.setCellValue("State");
+					break;
+				
+				case 5: 
+					cell.setCellValue("Zip Code");
+					break;
+				
+				case 6:
+					cell.setCellValue("Phone Number");
+					break;
+					
+				case 7:
+					cell.setCellValue("Latitude");
+					break;
+				
+				case 8:
+					cell.setCellValue("Longitude");
+					break;
+				
+				case 9:
+					cell.setCellValue("Geo Accuracy");
+					break;
+				
+				case 10:
+					cell.setCellValue("Country");
+					break;
+				
+				case 11:
+					cell.setCellValue("Country Code");
+					break;
+			
+				case 12:
+					cell.setCellValue("County");
+					break;
+			}
+			}
+			
+		
 		//iterating r number of rows
-		for (int r=0;r < masterlist.size(); r++ )
+		for (int r=1;r < masterlist.size()+1; r++ )
 		{
 			XSSFRow row = sheet.createRow(r);
 
 			//iterating c number of columns
-			for (int c=0;c < 13; c++ )
+			for (int c=0;c < 14; c++ )
 			{
 				
 				XSSFCell cell = row.createCell(c);
 				
 				switch(c) {
-					case 0:
-						cell.setCellValue(masterlist.get(r).getStorenumber());
+				
+					case 0: 
+						cell.setCellValue(masterlist.get(r-1).getStorenumber());
 						break;
 						
 					case 1: 
-						cell.setCellValue(masterlist.get(r).getStorename());
+						cell.setCellValue(masterlist.get(r-1).getStorename());
 						break;
 					
 					case 2:
-						cell.setCellValue(masterlist.get(r).getAddress());
+						cell.setCellValue(masterlist.get(r-1).getAddress());
 						break;
 					
 					case 3:
-						cell.setCellValue(masterlist.get(r).getCity());
+						cell.setCellValue(masterlist.get(r-1).getCity());
 						break;
 					
 					case 4: 
-						cell.setCellValue(masterlist.get(r).getState());
+						cell.setCellValue(masterlist.get(r-1).getState());
 						break;
 					
 					case 5:
-						cell.setCellValue(masterlist.get(r).getZipcode());
+						cell.setCellValue(masterlist.get(r-1).getZipcode());
 						break;
 						
 					case 6:
-						cell.setCellValue(masterlist.get(r).getPhoneNumber());
+						cell.setCellValue(masterlist.get(r-1).getPhoneNumber());
 						break;
 					
 					case 7:
-						cell.setCellValue(masterlist.get(r).getLatitude());
+						cell.setCellValue(masterlist.get(r-1).getLatitude());
 						break;
 					
 					case 8:
-						cell.setCellValue(masterlist.get(r).getLongitude());
+						cell.setCellValue(masterlist.get(r-1).getLongitude());
 						break;
 					
 					case 9:
-						cell.setCellValue(masterlist.get(r).getLocationtype());
+						cell.setCellValue(masterlist.get(r-1).getLocationtype());
 						break;
 					
 					case 10:
-						cell.setCellValue(masterlist.get(r).getCountry());
+						cell.setCellValue(masterlist.get(r-1).getCountry());
 						break;
 				
 					case 11:
-						cell.setCellValue(masterlist.get(r).getCountryCode());
+						cell.setCellValue(masterlist.get(r-1).getCountryCode());
 						break;
 					
 					case 12: 
-						cell.setCellValue(masterlist.get(r).getCounty());
+						cell.setCellValue(masterlist.get(r-1).getCounty());
 						break;
 				}
 			}

@@ -1,5 +1,6 @@
 package com.locdata.theatres.scraper;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,6 +8,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.utils.common.CommonUtils;
 
@@ -21,6 +25,7 @@ import com.locdata.utils.common.CommonUtils;
 public class Theatres_EImagine_LocData {
 	
 	static Set<String> websiteUrls = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> eImagineKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 	
     static final Set<String> toVisit = new HashSet<String>(){{
 		add("http://www.emagine-entertainment.com/michigan/");
@@ -28,7 +33,7 @@ public class Theatres_EImagine_LocData {
 		add("http://www.emagine-entertainment.com/illinois/");
 	}};
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 			
 			toVisit.parallelStream().forEach((action) -> {
 				
@@ -48,22 +53,29 @@ public class Theatres_EImagine_LocData {
 				}
 			});
 			
-		websiteUrls.parallelStream().forEach((q) -> {
+		websiteUrls.forEach((q) -> {
 			
 			Document doc = ScraperLogic.Scraper.fetchHtmlContents(q);
 			CommonUtils.checkDoc(doc, Theatres_EImagine_LocData.class);
-			
+			final GeoCodeEntityCarrierToExcelWriter obj = new GeoCodeEntityCarrierToExcelWriter();
 			Elements t = doc.body().select("div#theatre-single-content-box");
 			
 			for(Element p : t){
 				
 					Element phone = p.getElementsByTag("p").first();
 					System.out.println(" phone ----> " + phone.text());
-					
+					obj.setPhoneNumber(phone.text());
 					Element address = p.getElementsByTag("p").get(1);
 					System.out.println(" address ======> "+ address.text());
+					obj.setAddress(address.text());
 			}
-
+			try {
+				new GeoCodingApi(obj.getAddress(), obj);
+			} catch (Exception e) {
+				System.out.println(" GeoCoding API !!!!! ");
+			}
+			eImagineKeyDataSet.add(obj);
 		});
+		SheetLocalWriter.writeXLSXFile("EImagineTheatre.xlsx",eImagineKeyDataSet);
    }
 }

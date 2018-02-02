@@ -1,0 +1,26 @@
+package com.locdata.scraper.main;
+
+import org.jsoup.nodes.Document;
+
+import com.locdata.theatres.scraper.Theatres_AMCEntertainment_AggData;
+import com.locdata.utils.common.CommonUtils;
+
+public class AmberCrombieFitch {
+	
+	public static void main(String args[]){
+		String url = "https://www.abercrombie.com";
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc,AmberCrombieFitch.class);
+		String url = doc.select("a[href]");
+		
+		
+//		for(;;){
+//			Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.amctheatres.com/movie-theatres");
+//
+//			CommonUtils.checkDoc(doc,Theatres_AMCEntertainment_AggData.class);
+//
+//		}
+	}
+
+}

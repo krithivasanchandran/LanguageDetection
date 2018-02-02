@@ -1,13 +1,20 @@
 package com.locdata.theatres.scraper;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
 
 /*
  * Still needs work in it
@@ -15,21 +22,64 @@ import com.google.gson.JsonParser;
 
 public class Theatres_SilverCity_LocData {
 
-	private static String readAll(Reader rd) throws IOException {
-	    StringBuilder sb = new StringBuilder();
-	    int cp;
-	    while ((cp = rd.read()) != -1) {
-	      sb.append((char) cp);
-	    }
-	    return sb.toString();
-	  }
-public static void main(String args[]) throws IOException, InterruptedException {
-	
-	//URL :  https://www.cineplex.com/Utilities/GetTheatresForAutocomplete?jsonp=jQuery110207441148221285268_1514717224891&lang=en&query=SilverCity&_=1514717224894
-	//({"results":[{"title":"SilverCity Mission Cinemas","id":"silvercity-mission-cinemas","idVal":"1407","rowType":"theatre"},{"title":"SilverCity Riverport Cinemas","id":"silvercity-riverport-cinemas","idVal":"1409","rowType":"theatre"},{"title":"SilverCity Victoria Cinemas","id":"silvercity-victoria-cinemas","idVal":"1417","rowType":"theatre"},{"title":"SilverCity St. Vital Cinemas","id":"silvercity-st-vital-cinemas","idVal":"2402","rowType":"theatre"},{"title":"SilverCity CrossIron Mills Cinemas and XSCAPE Entertainment Centre","id":"silvercity-crossiron-mills-cinemas-and-xscape-entertainment-centre","idVal":"3150","rowType":"theatre"},{"title":"SilverCity Richmond Hill Cinemas","id":"silvercity-richmond-hill-cinemas","idVal":"7405","rowType":"theatre"},{"title":"SilverCity Newmarket Cinemas and XSCAPE Entertainment Centre","id":"silvercity-newmarket-cinemas-and-xscape-entertainment-centre","idVal":"7407","rowType":"theatre"},{"title":"SilverCity Brampton Cinemas","id":"silvercity-brampton-cinemas","idVal":"7411","rowType":"theatre"},{"title":"SilverCity Burlington Cinemas","id":"silvercity-burlington-cinemas","idVal":"7413","rowType":"theatre"},{"title":"SilverCity London Cinemas","id":"silvercity-london-cinemas","idVal":"7422","rowType":"theatre"}]});
-	URL url = new URL("https://www.cineplex.com/Utilities/GetTheatresForAutocomplete?jsonp=jQuery110207441148221285268_1514717224891&lang=en&query=SilverCity&_=1514717224894");
-    JsonParser jsonParser = new JsonParser();
-    JsonObject jsonObject = (JsonObject)jsonParser.parse(new InputStreamReader(url.openStream(), Charset.forName("UTF-8")));
-    System.out.println(jsonObject.toString());
-}
+	public static Set<GeoCodeEntityCarrierToExcelWriter> silverCityKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+	public static void main(String args[]) throws IOException, InterruptedException {
+
+		List<String> theatreNames = new ArrayList<String>() {
+			{
+				add("SilverCity Windsor Cinemas");
+				add("SilverCity Thunder Bay Cinemas");
+				add("SilverCity Sudbury Cinemas");
+				add("SilverCity Richmond Hill Cinemas (UltraAVX)");
+				add("Scotiabank Theatre Ottawa");
+				add("SilverCity London Cinemas");
+				add("SilverCity Newmarket Cinemas and XSCAPE Entertainment Centre");
+				add("SilverCity Burlington Cinemas");
+				add("SilverCity Brampton Cinemas");
+				add("SilverCity St. Vital Cinemas");
+				add("SilverCity CrossIron Mills Cinemas & XSCAPE Entertainment Centre");
+				add("SilverCity Victoria Cinemas");
+				add("SilverCity Riverport Cinemas");
+				add("SilverCity Mission Cinemas");
+			}
+		};
+
+		for (int i = 0; i < theatreNames.size(); i++) {
+
+			String url = theatreNames.get(i);
+			String url_1 = url.replaceAll("\\s", "+");
+			Document document = ScraperLogic.Scraper.fetchHtmlContents(
+					"https://www.cineplex.com/Theatres/TheatreListings?LocationURL=" + url_1 + "&Range=50");
+
+			CommonUtils.checkDoc(document, Theatres_SilverCity_LocData.class);
+
+			final GeoCodeEntityCarrierToExcelWriter silverCityMasterData = new GeoCodeEntityCarrierToExcelWriter();
+
+			silverCityMasterData.setStorename(url);
+
+			Elements t = document.body().select("div#Wrapper");
+
+			t.forEach((theatrelist) -> {
+
+				Elements k = theatrelist.select(".showtime-theatre");
+
+				for (Element q : k) {
+
+					System.out.println(" Address ------> " + q.select(".theatre-address").text());
+					silverCityMasterData.setAddress(q.select(".theatre-address").text());
+					System.out.println("  $$$$ " + q.getElementsByAttributeValue("itemprop", "telephone").text());
+					silverCityMasterData.setPhoneNumber(q.getElementsByAttributeValue("itemprop", "telephone").text());
+
+					try {
+						new GeoCodingApi(silverCityMasterData.getAddress(), silverCityMasterData);
+					} catch (Exception e1) {
+						System.out.println(" Exception Printed !!! ");
+					}
+				}
+			});
+			silverCityKeyDataSet.add(silverCityMasterData);
+		}
+		SheetLocalWriter.writeXLSXFile("SilverCityTheatres.xlsx", silverCityKeyDataSet);
+	}
 }

@@ -1,0 +1,9 @@
+package com.locdata.scraper.main;
+
+public class AmberCrombieFitch {
+	
+	public static void main(String args[]){
+		
+	}
+
+}

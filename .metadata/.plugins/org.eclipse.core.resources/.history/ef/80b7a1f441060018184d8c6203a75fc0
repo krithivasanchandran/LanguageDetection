@@ -1,0 +1,32 @@
+package com.locdata.scraper.main;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.utils.common.CommonUtils;
+
+public class AmberCrombieFitch {
+	
+	public static void main(String args[]){
+		String url = "https://www.abercrombie.com/shop/wd";
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc,AmberCrombieFitch.class);
+		Elements e = doc.select("a");
+		for(Element r : e){
+			String g = r.attr("href");
+			if(g.startsWith("/shop")){
+			
+					Document document = ScraperLogic.Scraper.fetchHtmlContents(url.concat(g));
+					CommonUtils.checkDoc(document,AmberCrombieFitch.class);
+					String text = doc.body().text();
+					System.out.println(text);
+			}
+			
+		}
+		
+
+	}
+
+}

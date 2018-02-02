@@ -3,14 +3,19 @@ package com.locdata.theatres.scraper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
 import com.locdata.scraper.main.ScraperLogic;
 import com.locdata.theatres.entity.EntityTheatre;
 import com.locdata.utils.common.CommonUtils;
@@ -19,6 +24,7 @@ public class Theatres_DraftHouse_AggData {
 
 	static List<String> theatres = new ArrayList<String>();
 	static List<EntityTheatre> address = new ArrayList<EntityTheatre>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> draftHouseKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
 
 	public static void main(String args[]) throws IOException, InterruptedException {
 
@@ -44,9 +50,14 @@ public class Theatres_DraftHouse_AggData {
 			Document document = ScraperLogic.Scraper.fetchHtmlContents(theatre);
 
 			CommonUtils.checkDoc(document,Theatres_DraftHouse_AggData.class);
+			
+			final GeoCodeEntityCarrierToExcelWriter draftHouseMasterData = new GeoCodeEntityCarrierToExcelWriter();
 
 			Elements element = document.select(".Footer-nav");
 			Element rambo = element.select(".medium-3.columns").first();
+			String storeName = rambo.select(".Footer-theater").text();
+			System.out.println(" Store Name  ==================> " + storeName);
+			draftHouseMasterData.setStorename(storeName);
 			Elements rt = rambo.select(".Footer-theaterInfo");
 
 			for (Element re : rt) {
@@ -59,17 +70,20 @@ public class Theatres_DraftHouse_AggData {
 				Elements rw = er.select("a[href]");
 				for (Element t : rw) {
 					if (t.text().matches("([0-9]*)-([0-9]*)-([0-9]*)")) {
+						System.out.println(" Phone Number ------------ > " + t.text());
+						draftHouseMasterData.setPhoneNumber(t.text());
 						entityTheatre.setPhoneNumber(t.text());
 					} else {
+						draftHouseMasterData.setAddress(t.text());
 						entityTheatre.setAddress(t.text());
 					}
 				}
-				address.add(entityTheatre);
+				//address.add(entityTheatre);
 			}
+			new GeoCodingApi(draftHouseMasterData.getAddress(), draftHouseMasterData);
+			draftHouseKeyDataSet.add(draftHouseMasterData);
 		}
 
-		for (int i = 0; i < address.size(); i++) {
-			System.out.println(" -------> " + address.get(i).getAddress());
-		}
+		 SheetLocalWriter.writeXLSXFile("DraftHouseTheatres.xlsx",draftHouseKeyDataSet);
 	}
 }
