@@ -15,13 +15,13 @@ public class AmberCrombieFitch {
 	public static void main(String args[]){
 		
 		List<String> linkedlist = new LinkedList<>();
-		String url = "https://www.abercrombie.com/shop/wd";
+		String url = "https://www.abercrombie.com";
 		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
 		CommonUtils.checkDoc(doc,AmberCrombieFitch.class);
 		Elements e1 = doc.select("a");
 		for(Element r1 : e1){
 		String g1 = r1.attr("href");
-		if(g1.startsWith("/shop")){
+		if(g1.startsWith("/")){
 			String f = g1.replaceAll("/shop/wd/", "/");
 			linkedlist.add(url.concat(f));
 		}
@@ -33,9 +33,8 @@ public class AmberCrombieFitch {
 			Elements e = document.select("a");
 			for(Element r : e){
 				String g = r.attr("href");
-				if(g.startsWith("/shop")){
-					String h2 = g.replace("/shop/wd/", "/");
-					linkedlist.add(url.concat(h2));
+				if(g.startsWith("/")){
+					linkedlist.add(url.concat(g));
 						String text = doc.body().text();
 						System.out.println(text);
 				}

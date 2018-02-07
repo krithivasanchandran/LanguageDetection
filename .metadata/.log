@@ -4136,3 +4136,63 @@ java.lang.NullPointerException
 !MESSAGE Unhandled event loop exception
 !STACK 0
 java.lang.NullPointerException
+
+!ENTRY org.eclipse.ui 4 0 2018-02-03 04:04:44.045
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.NullPointerException
+
+!ENTRY org.eclipse.ui 4 0 2018-02-03 12:45:26.698
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.NullPointerException
+
+!ENTRY org.eclipse.ui 4 0 2018-02-03 12:57:31.285
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.NullPointerException
+
+!ENTRY org.eclipse.epp.logging.aeri.ui 2 19 2018-02-03 18:02:06.369
+!MESSAGE Updating the index from remote failed. Version: 1.0.1.v20150913-0716
+!STACK 0
+java.net.UnknownHostException: www.eclipse.org: nodename nor servname provided, or not known
+	at java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+	at java.net.InetAddress$1.lookupAllHostAddr(InetAddress.java:901)
+	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1293)
+	at java.net.InetAddress.getAllByName0(InetAddress.java:1246)
+	at java.net.InetAddress.getAllByName(InetAddress.java:1162)
+	at java.net.InetAddress.getAllByName(InetAddress.java:1098)
+	at org.apache.http.impl.conn.SystemDefaultDnsResolver.resolve(SystemDefaultDnsResolver.java:44)
+	at org.apache.http.impl.conn.HttpClientConnectionOperator.connect(HttpClientConnectionOperator.java:102)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:319)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:363)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:219)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:195)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:86)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:108)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:184)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:82)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:57)
+	at org.apache.http.client.fluent.Executor.execute(Executor.java:206)
+	at org.eclipse.epp.internal.logging.aeri.ui.v2.AeriServer.downloadDatabase(AeriServer.java:148)
+	at org.eclipse.epp.internal.logging.aeri.ui.log.ProblemsDatabaseUpdateJob.run(ProblemsDatabaseUpdateJob.java:57)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.ui 4 0 2018-02-03 23:14:46.606
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.NullPointerException
+
+!ENTRY org.eclipse.ui 4 0 2018-02-05 19:37:15.778
+!MESSAGE Unhandled event loop exception
+!STACK 0
+java.lang.NullPointerException
+
+!ENTRY no.resheim.eclipse.utils.launcher.core 1 0 2018-02-06 18:43:36.505
+!MESSAGE Launching new Eclipse instance with "open -n /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app --args -vm /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/OracleJDK7/Contents/Home/jre/lib/server/libjvm.dylib -os macosx -ws cocoa -arch x86_64 -showsplash -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -name Eclipse --launcher.library /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_1.1.300.v20150602-1417/eclipse_1611.so -startup /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar --launcher.appendVmargs -product com.ebay.tools.r2.product.ide -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -product com.ebay.tools.r2.product.ide -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -product com.ebay.tools.r2.product.ide -keyring /Users/krichandran/.eclipse_keyring -showlocation -vmargs -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar "
+
+!ENTRY no.resheim.eclipse.utils.launcher.core 1 0 2018-02-06 18:47:16.613
+!MESSAGE Launching new Eclipse instance with "open -n /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app --args -vm /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/OracleJDK7/Contents/Home/jre/lib/server/libjvm.dylib -os macosx -ws cocoa -arch x86_64 -showsplash -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -name Eclipse --launcher.library /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_1.1.300.v20150602-1417/eclipse_1611.so -startup /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar --launcher.appendVmargs -product com.ebay.tools.r2.product.ide -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -product com.ebay.tools.r2.product.ide -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -product com.ebay.tools.r2.product.ide -keyring /Users/krichandran/.eclipse_keyring -showlocation -vmargs -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar "
+
+!ENTRY no.resheim.eclipse.utils.launcher.core 1 0 2018-02-06 18:54:56.993
+!MESSAGE Launching new Eclipse instance with "open -n /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app --args -vm /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/OracleJDK7/Contents/Home/jre/lib/server/libjvm.dylib -os macosx -ws cocoa -arch x86_64 -showsplash -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -name Eclipse --launcher.library /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_1.1.300.v20150602-1417/eclipse_1611.so -startup /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar --launcher.appendVmargs -product com.ebay.tools.r2.product.ide -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -product com.ebay.tools.r2.product.ide -launcher /Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/MacOS/eclipse -product com.ebay.tools.r2.product.ide -keyring /Users/krichandran/.eclipse_keyring -showlocation -vmargs -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Dosgi.requiredJavaVersion=1.7 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=512m -Xms512m -Xmx1024m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.Arrays.useLegacyMergeSort=true -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Djava.class.path=/Users/krichandran/Downloads/ride-6.1.1-mac64/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar "
