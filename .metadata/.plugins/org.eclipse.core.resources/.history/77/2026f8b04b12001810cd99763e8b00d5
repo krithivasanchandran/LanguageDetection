@@ -1,0 +1,14 @@
+package com.langdetect.parser;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.client.HttpClients;
+
+public class HTTPCore {
+	
+	public void pingTest(String url){
+		 CloseableHttpClient httpclient = HttpClients.createDefault();
+		 HttpGet httpget = new HttpGet("http://localhost/json");
+	}
+
+}

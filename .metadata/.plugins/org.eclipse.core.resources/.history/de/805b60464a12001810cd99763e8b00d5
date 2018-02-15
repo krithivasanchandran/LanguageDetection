@@ -1,0 +1,9 @@
+package com.langdetect.parser;
+
+public class HTTPCore {
+	
+	public void pingTest(String url){
+		
+	}
+
+}

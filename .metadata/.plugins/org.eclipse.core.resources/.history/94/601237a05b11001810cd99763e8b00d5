@@ -1,0 +1,104 @@
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.cybozu.labs.langdetect.Detector;
+import com.cybozu.labs.langdetect.DetectorFactory;
+import com.cybozu.labs.langdetect.LangDetectException;
+import com.cybozu.labs.langdetect.Language;
+
+public class LanguageCodeDetection {
+	
+	public void init(String profileDirectory) throws LangDetectException {
+        DetectorFactory.loadProfile(profileDirectory);
+    }
+    public String detect(String text) throws LangDetectException {
+        Detector detector = DetectorFactory.create();
+        detector.append(text);
+        return detector.detect();
+    }
+    public ArrayList<Language> detectLangs(String text) throws LangDetectException {
+        Detector detector = DetectorFactory.create();
+        detector.append(text);
+        return detector.getProbabilities();
+    }
+    public static void main(String args[]) throws IOException {
+        try {
+            LanguageCodeDetection ld = new  LanguageCodeDetection();
+            Queue<String> queueA =  new LinkedList<String>();
+            Set<String> duplicates = new HashSet<String>();
+            Map<String[],String> langResult = new HashMap<String[],String>(); 
+            final String root = "http://hireya.jp";
+            
+            String profileDirectory = "/Users/krichandran/Downloads/language-detection-master/profiles";
+            ld.init(profileDirectory);
+            int depth=0;
+            queueA.add("http://hireya.jp");
+            
+            while(queueA.size() > 0){
+            	String head = queueA.poll();
+            	
+            	System.out.println(" Elements in the queue are :: ");
+            	for(String t : queueA){
+            		System.out.println("Elements in the Queue -----------> " + t);
+            	}
+            	
+            	Document document = Jsoup.connect(head)
+        				.userAgent(
+        						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
+        				.timeout(30000)
+        				 .maxBodySize(0)
+        				.followRedirects(true)
+        				 .ignoreContentType(true)
+        				 .get();
+            	
+                    Elements e1 = document.head().select("a");
+            		for(Element r1 : e1){
+            		String g1 = r1.attr("href");
+            		System.out.println(g1);
+            		if(!g1.startsWith("./") && !g1.startsWith("#")){
+            			
+            			if(g1.startsWith("/") || g1.startsWith("?")){
+            				g1 = root.concat(g1);
+            			}
+            			
+            			if((g1.contains(root) || g1.contains(".jp"))){
+            				if(!duplicates.contains(g1)){
+                				System.out.println(" href ------> " + g1);
+                				duplicates.add(g1);
+                        		queueA.add(g1);
+                			}
+            			}
+            		}
+            		}
+                    String body= document.select("body").text();
+                    PrintStream out = new PrintStream(System.out, true, "UTF-8");
+                    out.println(body);
+                    try{
+                    	 System.out.println(ld.detectLangs(body));
+                    	 System.out.println(ld.detect(body));
+                    	 String[] urllist = (String[])duplicates.toArray();
+                    	 
+                    }catch(com.cybozu.labs.langdetect.LangDetectException ex){
+                    	System.out.println(" Language error !!! ");
+                    	System.out.println(" Error body is ::: " + body);
+                    }
+            }
+            langResult.keySet().forEach(key -> System.out.println(key + "->" + langResult.get(key)));
+        } catch (LangDetectException e) {
+            e.printStackTrace();
+        }
+        
+    }
+}

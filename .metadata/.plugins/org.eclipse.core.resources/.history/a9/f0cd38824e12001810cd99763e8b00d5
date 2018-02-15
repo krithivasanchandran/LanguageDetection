@@ -1,0 +1,5 @@
+package com.langdetect.parser;
+
+public class ExtractorCore {
+
+}

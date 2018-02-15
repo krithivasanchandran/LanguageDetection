@@ -1,0 +1,14 @@
+package com.langdetect.parser;
+
+import java.net.URI;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+
+public class HTTPCore {
+	
+	public void pingTest(String url){
+		 
+	}
+
+}

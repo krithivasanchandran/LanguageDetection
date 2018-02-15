@@ -1,0 +1,63 @@
+package com.locdata.scraper.main;
+
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.utils.common.CommonUtils;
+
+public class AmberCrombieFitch {
+	
+	public static void main(String args[]){
+		
+		Set<String> linkedlist = new CopyOnWriteArraySet<String>();
+		String url = "https://www.ae.com/international?cm=sSG-cSGD";
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc,AmberCrombieFitch.class);
+		Elements e1 = doc.select("a");
+		for(Element r1 : e1){
+		String g1 = r1.attr("href");
+		if(g1.startsWith("/")){
+			String f = g1;
+			//System.out.println("url  ----> " + f);
+			if(f.contains("about") || f.contains("contact") || f.contains("help")){
+				//System.out.println(" Inside the about page =================> " +  f);
+				linkedlist.add(url.concat(f));
+			}
+		}
+		}
+		
+		while(linkedlist.size() > 0){
+			
+			for(String sr : linkedlist){
+				Document document = ScraperLogic.Scraper.fetchHtmlContents(sr);
+				Elements e2 = document.select("a");
+				for(Element r1 : e2){
+					String g1 = r1.attr("href");
+					if(g1.contains("help")){
+						String f = g1;
+					//	System.out.println("Added URL --=======================>>>>>>>  ----> "+ url.concat(f).toString());
+							linkedlist.add(url.concat(f));
+					}
+				}
+				
+				String body = document.text();
+				
+				Pattern ptr = Pattern.compile("^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$");
+				Matcher m = ptr.matcher(body);
+				if(m.matches()){
+					System.out.println(" Phone number match found  :::::::::: " + m.group());
+				}
+				
+				linkedlist.remove(sr);
+			}
+		}
+		
+		System.out.println(" linkedlist final size  " + linkedlist.size());
+		}
+	}

@@ -1,9 +1,0 @@
-package com.locdata.geocoding.google.service;
-
-/*
- * Store the bean as a list of JSON responses and send it to excel writer
- */
-
-public class GeoCodeEntityCarrierToExcelWriter {
-
-}

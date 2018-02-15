@@ -1,0 +1,16 @@
+package com.langdetect.parser;
+
+import java.net.URI;
+
+import org.apache.http.client.methods.HttpGet;
+
+public class HTTPCore {
+	
+	public void pingTest(String url){
+		 HttpGet httpget = new HttpGet(url);
+		 CloseableHttpResponse response = httpclient.execute(httpget);
+		 URI uri = httpget.getURI();
+		 uri.get
+	}
+
+}

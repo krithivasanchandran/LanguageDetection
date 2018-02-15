@@ -1,0 +1,56 @@
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.cybozu.labs.langdetect.Detector;
+import com.cybozu.labs.langdetect.DetectorFactory;
+import com.cybozu.labs.langdetect.LangDetectException;
+import com.cybozu.labs.langdetect.Language;
+
+public class LanguageCodeDetection {
+	
+	public void init(String profileDirectory) throws LangDetectException {
+        DetectorFactory.loadProfile(profileDirectory);
+    }
+    public String detect(String text) throws LangDetectException {
+        Detector detector = DetectorFactory.create();
+        detector.append(text);
+        return detector.detect();
+    }
+    public ArrayList<Language> detectLangs(String text) throws LangDetectException {
+        Detector detector = DetectorFactory.create();
+        detector.append(text);
+        return detector.getProbabilities();
+    }
+    public static void main(String args[]) throws IOException {
+        try {
+            LanguageCodeDetection ld = new  LanguageCodeDetection();
+
+            String profileDirectory = "/Users/krichandran/Downloads/language-detection-master/profiles";
+            ld.init(profileDirectory);
+            String text = "This is english language detection";
+            Document document = Jsoup.connect("http://hireya.jp")
+				.userAgent(
+						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
+				.timeout(30000)
+				 .maxBodySize(0)
+				.followRedirects(true)
+				 .ignoreContentType(true)
+				.get();
+            Elements e1 = document.select("a");
+    		for(Element r1 : e1){
+    		String g1 = r1.attr("href");
+    		}
+            String body= document.select("body").text();
+            System.out.println(ld.detectLangs(body));
+            System.out.println(ld.detect(body));
+        } catch (LangDetectException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
