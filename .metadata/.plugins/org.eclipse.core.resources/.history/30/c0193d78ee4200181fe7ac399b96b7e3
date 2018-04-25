@@ -1,0 +1,113 @@
+package com.locdata.theatres.scraper;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.google.i18n.phonenumbers.PhoneNumberMatch;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * Chain venture with more than 700 locations.
+ * Now parsing just USA and Canada
+ */
+
+public class GymboreeClasses {
+	
+	final static Set<String> locationurls = new HashSet<String>();
+	final public static Set<GeoCodeEntityCarrierToExcelWriter> gymboreeClassesKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+	public static void main(String args[])
+	{
+		String url = "https://www.gymboreeclasses.com/en/locations/";
+		String root = "https://www.gymboreeclasses.com";
+		final String country = "US";
+		
+		AtomicInteger count = new AtomicInteger(0);
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+
+		CommonUtils.checkDoc(doc, GymboreeClasses.class);
+
+		/*
+		 * Retrieve GymboreeClasses Location - USA & Canada but available for entire world
+		 */
+
+		Elements r = doc.select(".row.small-up-1.medium-up-3.large-up-3.location-list");
+		for(Element d : r){
+			d.select(".columns").forEach((s) -> {
+					System.out.println("Href " + s.select("a").attr("href"));
+					String link = s.select("a").attr("href");
+					System.out.println(" Location URL : " + link);
+						locationurls.add(link);
+						count.addAndGet(1);
+					});
+			}
+		System.out.println(" Total Location Count is  :: " + count.get() + " Location urls size is :: " + locationurls.size());
+
+		locationurls.forEach((a_t) -> {
+			a_t = root.concat(a_t);
+			Document docs = ScraperLogic.Scraper.fetchHtmlContents(a_t);
+
+			CommonUtils.checkDoc(docs, GymboreeClasses.class);
+			final GeoCodeEntityCarrierToExcelWriter apiresponse = new GeoCodeEntityCarrierToExcelWriter();
+
+			docs.select(".location-list-results").forEach((j) -> {
+				j.select(".columns").forEach((v) -> {
+					String storename = v.select("strong").text();
+					System.out.println(" Storename  " + storename);
+					apiresponse.setStorename(storename);
+					
+					String storeidRaw = v.select("a").attr("href");
+					String temp = storeidRaw;
+					String storeId = storeidRaw.split("/locations/")[1].split("/select/")[0];
+					System.out.println(" Store Id " + storeId);
+					apiresponse.setStorenumber(Integer.parseInt(storeId));
+					
+					// Traverse this page to retreive Address and Phone information and Email address
+					temp = root.concat(temp);
+					Document doc_a = ScraperLogic.Scraper.fetchHtmlContents(temp);
+					CommonUtils.checkDoc(doc_a, GymboreeClasses.class);
+				
+					doc_a.select(".location-summary").forEach((g) -> {
+						String address = g.select(".address").text();
+						System.out.println(" address --------------------> " + address); 
+						
+					
+						PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+						try {
+						  PhoneNumberMatch itr = phoneUtil.findNumbers(address, country).iterator().next();
+						  System.out.println(" Raw text --------------------> " + itr.rawString());
+						  String phone =  (String) address.subSequence(itr.start(), itr.end());
+							System.out.println(" Phone information --------------------> " + phone); 
+
+							  apiresponse.setPhoneNumber(phone);
+							  address = address.substring(0, itr.start());
+							  apiresponse.setAddress(address);
+							  
+						  }catch (Exception ex) {
+						  System.err.println("NumberParseException was thrown: " + ex.toString());
+						}
+						Element mail = g.select(".location-links").select("li").first();
+						String email = mail.select("a").attr("href");
+						System.out.println(" Email Address " + email);
+						// Temporarily setting email address to store hours
+						apiresponse.setStoreHours(email);
+						
+						
+						gymboreeClassesKeyDataSet.add(apiresponse);
+					});
+				}); 
+			});
+
+		});
+		}
+
+}

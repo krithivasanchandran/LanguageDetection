@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -27,6 +30,7 @@ public class SheetLocalWriter {
 
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet(sheetName);
+		
 		List<GeoCodeEntityCarrierToExcelWriter> masterlist = new ArrayList<GeoCodeEntityCarrierToExcelWriter>(masterData);
 		for(GeoCodeEntityCarrierToExcelWriter w: masterlist){
 			System.out.println("Copied Cell contents are  " + w.getAddress());
@@ -42,7 +46,7 @@ public class SheetLocalWriter {
 				switch(c) {
 				case 0:
 					cell.setCellValue("Store ID");
-				
+					break;
 				case 1:
 					cell.setCellValue("Store Name");
 					break;
@@ -89,6 +93,10 @@ public class SheetLocalWriter {
 			
 				case 12:
 					cell.setCellValue("County");
+					break;
+				
+				case 13:
+					cell.setCellValue("Store Hours");
 					break;
 			}
 			}
@@ -157,6 +165,10 @@ public class SheetLocalWriter {
 					
 					case 12: 
 						cell.setCellValue(masterlist.get(r-1).getCounty());
+						break;
+					
+					case 13: 
+						cell.setCellValue(masterlist.get(r-1).getStoreHours());
 						break;
 				}
 			}

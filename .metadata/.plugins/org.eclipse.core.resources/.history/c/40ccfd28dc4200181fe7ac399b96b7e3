@@ -1,0 +1,83 @@
+package com.locdata.theatres.scraper;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * Website: http://getairsports.com/locations
+ * Location URL we displaying duplicates
+ * 
+ */
+
+public class GetAirLocations {
+	
+	final static Set<String> locationurls = new HashSet<String>();
+	final public static Set<GeoCodeEntityCarrierToExcelWriter> getAirKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+	public static void main(String args[]){
+		String url = "http://getairsports.com/locations";
+		AtomicInteger count = new AtomicInteger(0);
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+
+		CommonUtils.checkDoc(doc, GetAirLocations.class);
+
+		/*
+		 * Retrieve Get Air Location - USA but available for entire world
+		 */
+
+		Elements r = doc.select(".location-names");
+		for(Element d : r){
+			d.select("ul").forEach((s) -> {
+				d.select("li").forEach((v) -> {
+					System.out.println("Href " + v.select("p > a").attr("href"));
+					locationurls.add(v.select("p > a").attr("href"));
+					count.addAndGet(1);
+				});
+			});
+		}
+
+		System.out.println(" Total Location Count is  :: " + count.get() + " Location urls size is :: " + locationurls.size());
+		
+		locationurls.forEach((x) -> {
+			final GeoCodeEntityCarrierToExcelWriter apiresponse = new GeoCodeEntityCarrierToExcelWriter();
+
+			Document document = ScraperLogic.Scraper.fetchHtmlContents(x);
+			CommonUtils.checkDoc(document, GetAirLocations.class);
+			
+		    document.select(".logo-details.pull-left").forEach((o) -> {
+		    	if(o.firstElementSibling() != null){
+			    	String address = o.select("a").first().text();
+			    	System.out.println(" Address :::  " + address );
+			    	apiresponse.setAddress(address);
+		    	}
+		    	if(o.lastElementSibling() != null){
+		    		String phone = o.select("a").last().text();
+		    		System.out.println(" Phone number " + phone);
+		    		apiresponse.setPhoneNumber(phone);
+		    	}
+		    });
+		   
+		    String seed = x.concat("/contact");
+		    
+		    Document docs = ScraperLogic.Scraper.fetchHtmlContents(seed);
+			CommonUtils.checkDoc(docs, GetAirLocations.class);
+		    		
+			docs.select(".white-wrapper").forEach((a_) -> {
+				String hours = a_.select("p").text();
+				System.out.println(" Day :: " + hours);
+				apiresponse.setStoreHours(hours);
+			});
+		    
+		});
+	}
+
+}

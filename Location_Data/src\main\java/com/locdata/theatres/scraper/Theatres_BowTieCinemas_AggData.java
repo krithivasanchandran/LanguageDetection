@@ -45,7 +45,7 @@ public class Theatres_BowTieCinemas_AggData {
 
 		EntityTheatre entitytheatre = null;
 
-		Document doc = ScraperLogic.Scraper.fetchHtmlContents("https://www.bowtiecinemas.com/locations/");
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents("http://www.bowtiecinemas.com/locations");
 		
 		CommonUtils.checkDoc(doc,Theatres_BowTieCinemas_AggData.class);
 

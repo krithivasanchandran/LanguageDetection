@@ -1,0 +1,42 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+
+import com.dataruvi.commons.unique.GenericUnique;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * Wheel Fun Rentals has over 100 locations nationwide, with more than 2.5 million 
+ * guests hopping on-and-off recreational products each year. Locations include city, 
+ * state, and national parks, beaches, marinas, retail spots, hotels, visitor centers, and more.
+ * 
+ */
+
+public class WheelFunRentals {
+
+	static final HashSet<GenericUnique> collectDataUnique = new HashSet<GenericUnique>();
+	static final Set<String> duplicatehunter = new HashSet<String>();
+	
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+		
+		String parentUrl = "https://wheelfunrentals.com/find-a-location/";
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+		CommonUtils.checkDoc(doc, SixFlags.class);
+
+		doc.select(".corp-find-loc__find-results").forEach((t) -> {
+			t.select(".state-section").forEach((m) -> {
+				
+			});
+		});
+		
+	}
+}

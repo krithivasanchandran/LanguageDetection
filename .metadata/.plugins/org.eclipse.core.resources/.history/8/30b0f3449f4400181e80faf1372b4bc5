@@ -1,0 +1,82 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * Sam Goody stores now - "for your entertainment" - https://stores.fye.com/index.html
+ * 
+ * With count (1) - directly takes you to html page
+ */
+public class SamGoodyStores {
+	
+	static Set<String> locations = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> samgoodyStoresKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	final static List<String> storeName = new ArrayList<String>();
+
+	public static void main(String args[]) throws IOException {
+
+		String url = "https://stores.fye.com/index.html";
+		String root = "https://stores.fye.com/";
+		AtomicInteger counter = new AtomicInteger(0);
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc, SamGoodyStores.class);
+
+		Elements e = doc.select(".c-directory-list-content");
+		for (Element r : e) {
+			
+			for (Element t : r.select("li")) {
+				String href = t.select("a[href]").attr("href");
+				System.out.println(" href --?> " + href);
+				String itemcount = t.select(".c-directory-list-content-item-count").text();
+				System.out.println(" itemcount --?> " + itemcount);
+				href = root.concat(href);
+				
+				if(itemcount.equalsIgnoreCase("(1)") && href.endsWith(".html")){
+					 parsedirecthtml(href);
+				}else{
+					locations.add(href);
+				}
+				counter.addAndGet(1);
+			}
+		}
+		
+		locations.forEach((x) -> {
+			Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+			CommonUtils.checkDoc(doc, SamGoodyStores.class);
+
+		});
+		
+		
+	}
+	
+	private static void parsedirecthtml(String link){
+		
+		final GeoCodeEntityCarrierToExcelWriter storedetails = new GeoCodeEntityCarrierToExcelWriter();
+		Document document = ScraperLogic.Scraper.fetchHtmlContents(link);
+		CommonUtils.checkDoc(document, SamGoodyStores.class);
+		
+		String storeaddress = document.select(".StoreInfo-address").text();
+		String phone = document.select(".StoreInfo-phone").text();
+		String storeHours = document.select(".StoreInfo-hours").text();
+		System.out.println(" Store Address ----------> " + storeaddress);
+		storedetails.setAddress(storeaddress);
+		System.out.println(" Phone ----------> " + phone);
+		storedetails.setPhoneNumber(phone);
+		System.out.println(" Storehours ----------> " + storeHours);
+		storedetails.setStoreHours(storeHours);
+		samgoodyStoresKeyDataSet.add(storedetails);
+	}
+}

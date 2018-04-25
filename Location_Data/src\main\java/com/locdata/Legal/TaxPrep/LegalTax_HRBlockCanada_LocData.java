@@ -83,6 +83,7 @@ public class LegalTax_HRBlockCanada_LocData {
 					        	    for (Object o : jarray) {
 					        	    	
 					        	        JsonObject jsonLineItem = (JsonObject)o;
+					        	        System.out.println(jsonLineItem.toString());
 					        	        hr = new HRCanadaEntity();
 					        	        hr.setAddress(jsonLineItem.get("address").toString());
 					        	        hr.setStoreId(jsonLineItem.get("id").toString());

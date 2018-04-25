@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workingSetManager>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1523686703629_1" label="hello" name="hello">
+<item elementID="=Location_Data/src\\main\\java&lt;com.locdata.theatres.scraper{Altitude_Trampoline_Park.java" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSet>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1514435704887_0" label="Window Working Set" name="Aggregate for window 1514435704886"/>
 </workingSetManager>

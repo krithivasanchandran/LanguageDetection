@@ -1,0 +1,86 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class RockinJump {
+
+	static Set<String> locations = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> rockinJumpKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	final static List<String> storeName = new ArrayList<String>();
+	
+	public static void main(String args[]) throws IOException{
+		
+		String url = "https://rockinjump.com/locations";
+		String root = "https://www.pumpitupparty.com";
+		AtomicInteger counter = new AtomicInteger(0);
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc, PumpItUpPartyLocations.class);
+		
+		Elements e = doc.select(".et_pb_rj_locations__list");
+		for(Element r : e){
+			for(Element t: r.select("li")){
+				String href = t.select("a[href]").attr("href");
+				System.out.println(" href --?> " + href);
+				href=href.endsWith("/") ? href.concat("trampoline-park-contact-us/") : href.concat("/trampoline-park-contact-us/");
+				locations.add(href);
+				counter.addAndGet(1);
+			}
+		}
+		
+		System.out.println("Total Locations count is :: " + counter.get());
+		
+		locations.forEach((z) -> {
+			
+			System.out.println(" Now Crawling =================> " + z);
+			
+			Document document = ScraperLogic.Scraper.fetchHtmlContents(z);
+			
+			//Skip the iteration in chinese website: http://www.obi-rockinjump.com/
+			if(document == null) return;
+			
+			CommonUtils.checkDoc(document, PumpItUpPartyLocations.class);
+			final GeoCodeEntityCarrierToExcelWriter responsebean = new GeoCodeEntityCarrierToExcelWriter();
+
+			Elements rx = document.select(".et_pb_text_inner");	
+			
+			if(rx.get(1).select("h2").text().equalsIgnoreCase("Address")){
+				
+					String rawText = rx.text();
+					String rate = rawText.substring(rawText.indexOf("Address")+"Address".length(), rawText.indexOf("JOIN OUR MAILING LIST") != -1 ? rawText.indexOf("JOIN OUR MAILING LIST") 
+							: rawText.indexOf("Use the form below"));
+					System.out.println( rate + "\n");
+					
+					int index = rate.indexOf("Trampoline Park");
+					String storename = rate.substring(0,index+"Trampoline Park".length());
+					responsebean.setStorename(storename);
+					System.out.println(" Store name  =================> " + storename);
+
+					String address = rate.substring(index+"Trampoline Park".length(),rate.indexOf("Telephone"));
+					responsebean.setAddress(address);
+					System.out.println(" Address  =================> " + address);
+					
+					String phone = rate.split("Telephone")[1].split("Email:")[0];
+					responsebean.setPhoneNumber(phone);
+					System.out.println(" Phone  =================> " + phone);
+
+					
+					String email = rate.split("Email:")[1];
+					responsebean.setPlaceId(email);
+			}
+		});
+		
+	}
+}

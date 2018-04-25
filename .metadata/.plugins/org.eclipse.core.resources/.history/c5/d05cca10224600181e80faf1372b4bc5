@@ -1,0 +1,31 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+
+import com.dataruvi.commons.unique.GenericUnique;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class WheelFunRentals {
+
+	static final HashSet<GenericUnique> collectDataUnique = new HashSet<GenericUnique>();
+	static final Set<String> duplicatehunter = new HashSet<String>();
+	
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+		
+		String parentUrl = "";
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+
+		CommonUtils.checkDoc(doc, SixFlags.class);
+
+		
+	}
+}

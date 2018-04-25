@@ -1,0 +1,10 @@
+package com.locdata.theatres.scraper;
+
+public class PumpItUpPartyLocations {
+	
+	/*
+	 * Tricky one - scrape from the sitemap: https://www.pumpitupparty.com/site-map/
+	 * get class ="sub-menu" and get the immediate parent of it - That is the page.
+	 */
+
+}

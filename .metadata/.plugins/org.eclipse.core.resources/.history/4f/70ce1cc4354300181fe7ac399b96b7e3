@@ -1,0 +1,47 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class PicturePeople {
+	
+	final static Set<String> locationurls = new HashSet<String>();
+	final public static Set<GeoCodeEntityCarrierToExcelWriter> pictureKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+	public static void main(String args[]) throws IOException {
+		
+		String url = "http://www.picturepeople.com/location/index";
+		final String country = "US";
+
+		AtomicInteger count = new AtomicInteger(0);
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+
+		CommonUtils.checkDoc(doc, JumpZoneLocations.class);
+
+		/*
+		 * Retrieve Jump Zone Location - Only usa it is available for
+		 * entire world
+		 */
+
+		Elements r = doc.select(".listview.stateList");
+		for (Element d : r) {
+			System.out.println("Href " + d.attr("value"));
+			String sublink = d.attr("value");
+			sublink = root.concat(sublink);
+			locationurls.add(sublink);
+			count.addAndGet(1);
+		}
+		System.out.println(
+				" Total Location Count is  :: " + count.get() + " Location urls size is :: " + locationurls.size());
+	}
+}

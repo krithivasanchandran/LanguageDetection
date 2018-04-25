@@ -1,0 +1,83 @@
+package com.dataruvi.automotive.carrentals;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+import redis.clients.jedis.Jedis;
+
+public class EnterpriseCarRentals {
+
+	final static Set<String> parentPageSeed = new HashSet<String>();
+	final static Set<String> secondaryPageSeedState = new HashSet<String>();
+
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+
+		String parentUrl = "https://www.enterprise.com/en/car-rental/locations/us.html?icid=header.locations.rental-_-us.locations-_-ENUS.NULL";
+		String root = "https://www.enterprise.com";
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+		CommonUtils.checkDoc(doc, EnterpriseCarRentals.class);
+
+		doc.select(".state-list").forEach((t) -> {
+			t.select(".cf.state-level-item").forEach((m) -> {
+				m.select("h3").forEach((j) -> {
+					String url = j.select("a").attr("href");
+					url = root.concat(url);
+					System.out.println(" URls -----------> " + url);
+					parentPageSeed.add(url);
+				});
+			});
+		});
+
+		System.out.println(" Size of the url list is " + parentPageSeed.size());
+
+		parentPageSeed.forEach((z) -> {
+
+			System.out.println(" Now Crawling Seed !! ---------> " + z);
+
+			// Fetch the headers:
+			Document docs = ScraperLogic.Scraper.fetchHtmlContents(z);
+			CommonUtils.checkDoc(docs, EnterpriseCarRentals.class);
+
+			docs.select(".en_us.statepage").forEach((v) -> {
+					v.select(".band.location-band.region-list").forEach((m) -> {
+						m.select(".cf").forEach((act) -> {
+							act.select("ul").forEach((a1) -> {
+								a1.select("li").forEach((n) -> {
+									String heading = n.select("a").attr("href");
+									heading = root.concat(heading);
+									System.out.println(" SubPAge SEEDS BASED ON STATE IS -----------> " + heading);
+									secondaryPageSeedState.add(heading);
+								});
+							});
+						});
+					});	
+			});
+		});
+		
+		System.out.println(" Total locations in us is " + secondaryPageSeedState.size());
+		
+		Jedis jedis = new Jedis("localhost");
+		System.out.println("Connection to server sucessfully"); 
+	    System.out.println("Server is running: "+jedis.ping()); 
+	    
+	    if(jedis.ping().equalsIgnoreCase("PONG")){
+	    	
+	    	for(String writeexternal : secondaryPageSeedState){
+			      // Right pushing and storing all the data in redis and then hitting the server one by one
+			      jedis.rpush("avisrental", writeexternal);
+			}
+	    }
+
+	}
+}

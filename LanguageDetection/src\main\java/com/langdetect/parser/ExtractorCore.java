@@ -1,5 +1,7 @@
 package com.langdetect.parser;
 
+import java.util.regex.Pattern;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -11,9 +13,9 @@ public class ExtractorCore {
 		try{
 			document = Jsoup.connect(head)
 					.userAgent("Mozilla")
-					.timeout(30000)
+					.timeout(40000)
 					.maxBodySize(0)
-					.followRedirects(false)
+					.followRedirects(true)
 					.ignoreContentType(true)
 					.get();
 			return document;
@@ -22,5 +24,6 @@ public class ExtractorCore {
 		}
 		return null;
 	}
+	
 
 }

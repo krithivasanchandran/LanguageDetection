@@ -1,0 +1,73 @@
+package com.locdata.theatres.scraper;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class PumpItUpPartyLocations {
+	
+	/*
+	 * Tricky one - scrape from the sitemap: https://www.pumpitupparty.com/site-map/
+	 * get class ="sub-menu" and get the immediate parent of it - That is the page.
+	 * https://www.entrepreneur.com/franchise/pumpitup/308827
+	 */
+	
+	static Set<String> locations = new HashSet<String>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> cinemarkKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	final static List<String> storeName = new ArrayList<String>();
+	
+	public static void main(String args[]){
+		
+		String url = "https://www.pumpitupparty.com/site-map/";
+		String root = "https://www.pumpitupparty.com";
+		AtomicInteger counter = new AtomicInteger(0);
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc, PumpItUpPartyLocations.class);
+		
+		Elements e = doc.select(".sub-menu");
+		
+		e.forEach((s) -> {
+			String nurl = s.parent().select("a").attr("href");
+			nurl = root.concat(nurl).concat("contact-us/");
+			System.out.println(" Hello how are you " + nurl);
+			locations.add(nurl);
+			counter.addAndGet(1);
+		});
+		
+		System.out.println("Total Locations count is :: " + counter.get());
+
+		locations.forEach((x) -> {
+			
+			System.out.println(" Now Crawling =================> " + x);
+			
+			Document document = ScraperLogic.Scraper.fetchHtmlContents(x);
+			CommonUtils.checkDoc(document, PumpItUpPartyLocations.class);
+		
+		    document.select(".contact-us.two_col").forEach((r) -> {
+		    	
+		    	for(Element d : r.select("p")){
+			    	System.out.println(" ------> " +r.select("a").attr("href"));
+
+		    	}
+		    	String email = r.select(".email").text();
+			    System.out.println(" EMAIL : -------> " + email);
+			    
+			    String phone = r.select(".fb_store_contact_phone").text();
+			    System.out.println(" Phone : -------> " + phone);
+
+			    String address = r.select(".address").text();
+			    System.out.println(" Address : -------> " + address);
+		    });
+		});
+	}
+}

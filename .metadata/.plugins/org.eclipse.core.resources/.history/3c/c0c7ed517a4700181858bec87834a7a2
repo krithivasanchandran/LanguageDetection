@@ -1,0 +1,142 @@
+package com.dataruvi.automotive.carrentals;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * When doing large crawls make sure to store the seed urls in a extrernal redis queue or a file
+ */
+
+public class AvisCarRental {
+
+	public static Set<GeoCodeEntityCarrierToExcelWriter> avisCarRentalsKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	public static Set<GeoCodeEntityCarrierToExcelWriter> avisfinalMasterData = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	final static Set<String> parentPageSeed = new HashSet<String>();
+	final static Set<String> subPageSeeds = new HashSet<String>();
+	final static Set<String> indivseeds = new HashSet<String>();
+
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+
+		String parentUrl = "https://www.budget.com/en/locations/us";
+		String root = "https://www.budget.com";
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+		CommonUtils.checkDoc(doc, AvisCarRental.class);
+
+		doc.select(".location-list.section").forEach((t) -> {
+			t.select(".country-wrapper.row").forEach((m) -> {
+				m.select("ul").forEach((j) -> {
+					j.select("li").forEach((s) -> {
+						s.select("a").forEach((v) -> {
+							String url = v.attr("href");
+							url = root.concat(url);
+							System.out.println(" URls -----------> " + url);
+							parentPageSeed.add(url);
+						});
+					});
+				});
+			});
+		});
+		System.out.println(" Size of the url list is " + parentPageSeed.size());
+
+		parentPageSeed.forEach((v) -> {
+
+			System.out.println(" Now Crawling Seed !! ---------> " + v);
+
+			// Fetch the headers:
+			Document docs = ScraperLogic.Scraper.fetchHtmlContents(v);
+			CommonUtils.checkDoc(docs, AvisCarRental.class);
+
+			docs.select(".location-state.kansas-section").forEach((o) -> {
+				o.select(".col-sm-12.col-xs-12.border-bottom.padd-top0.padd-right0").forEach((t) -> {
+					String heading = t.select(".location-heading").attr("href");
+					heading = root.concat(heading);
+					subPageSeeds.add(heading);
+				});
+			});
+		});
+		
+		subPageSeeds.forEach((c) -> {
+			Document dt = ScraperLogic.Scraper.fetchHtmlContents(c);
+			CommonUtils.checkDoc(dt, AvisCarRental.class);
+
+			if (dt != null) {
+				for (Element f : dt.select(".loc-city.form-container")) {
+					f.select(".form-group").forEach((z) -> {
+						z.select(".LocContainer.Search-container.col-sm-12.col-xs-12.clearfix").forEach((x) -> {
+							x.select(".loopFour.clearfix").forEach((t) -> {
+								t.select(".locTitl").forEach((l) -> {
+									String individualLocations = l.select("a").attr("ng-href");
+									individualLocations = root.concat(individualLocations);
+									System.out.println(
+											" individualLocations  ------------------------> " + individualLocations);
+									indivseeds.add(individualLocations);
+								});
+							});
+						});
+					});
+				}
+
+			}
+		});
+
+		indivseeds.forEach((d) -> {
+			Document yd = ScraperLogic.Scraper.fetchHtmlContents(d);
+			CommonUtils.checkDoc(yd, AvisCarRental.class);
+
+			if (yd != null) {
+				yd.select(".location-details.section").forEach((p) -> {
+					
+					final GeoCodeEntityCarrierToExcelWriter avisCarRental = new GeoCodeEntityCarrierToExcelWriter();
+
+					String address = p.select("div[itemprop=address].gap-for-address").text();
+					System.out.println(" Address name  ---------------> " + address);
+					avisCarRental.setAddress(address);
+
+					String phone = p.select("span[itemprop=telephone]").text();
+					System.out.println(" Phone number  ---------------> " + phone);
+					avisCarRental.setPhoneNumber(phone);
+
+					String storehours = p.select("span[itemprop=openingHours]").text();
+					System.out.println(" Hours  ---------------> " + storehours);
+					avisCarRental.setStoreHours(storehours);
+
+					String storename = p.select(".location-page-g h2 span[itemprop=name]").text();
+					System.out.println(" storename  ---------------> " + storename);
+					avisCarRental.setStorename(storename);
+					avisCarRentalsKeyDataSet.add(avisCarRental);
+				});
+			}
+		});
+		System.out.println(" Final Individuals Locations in USA is  :: " + avisCarRentalsKeyDataSet.size());
+
+		for(final GeoCodeEntityCarrierToExcelWriter io: avisCarRentalsKeyDataSet){
+			try {
+				new GeoCodingApi(io.getAddress(), io);
+				avisfinalMasterData.add(io);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		try {
+			SheetLocalWriter.writeXLSXFile("AvisCarRentalUSA.xlsx", avisfinalMasterData);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+
+	}
+}

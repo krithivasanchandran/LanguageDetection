@@ -1,0 +1,25 @@
+package com.dataruvi.automotive.carrentals;
+
+import org.jsoup.nodes.Document;
+
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class car {
+	
+	public static void main(String args[]){
+		
+		String url ="https://www.enterprise.com/en/car-rental/locations/us/nj/wayne-state-rte-23-24dq.html";
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+		CommonUtils.checkDoc(doc, car.class);
+		
+		String script = doc.select("script").html();
+		//System.out.println(" Script tag is :: " + script);
+		int index =script.indexOf("/"/locationId/"/");
+		String str = script.substring(index, script.indexOf("}", index));
+		
+		// Extract the Location Id from the Script tags
+		System.out.println(str);
+	}
+
+}

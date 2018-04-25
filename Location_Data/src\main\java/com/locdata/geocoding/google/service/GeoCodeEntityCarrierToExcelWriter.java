@@ -37,7 +37,14 @@ public class GeoCodeEntityCarrierToExcelWriter {
 	private String countryCode;
 	private String county;
 	private String placeId;
+	private String storeHours;
 	
+	public String getStoreHours() {
+		return storeHours;
+	}
+	public void setStoreHours(String storeHours) {
+		this.storeHours = storeHours;
+	}
 	public String getPlaceId() {
 		return placeId;
 	}

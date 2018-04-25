@@ -1,0 +1,65 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class LaserQuest {
+
+	final static Set<String> locationurls = new HashSet<String>();
+final public static Set<GeoCodeEntityCarrierToExcelWriter> LaserQuestKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+public static void main(String args[]) throws IOException {
+	
+	String url = "https://www.laserquest.com/locations/";
+	final String country = "US";
+
+	Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+
+	CommonUtils.checkDoc(doc, LaserQuest.class);
+	
+	Elements ele = doc.select("div#results_box");
+	for(Element e : ele){
+		Elements r = e.select("div#results_box_output");
+		r.forEach((s) -> {
+			Elements d = s.select(".slp_results_container");
+			d.forEach((l) -> {
+				String address = l.select(".results_row_center_column").text();
+				System.out.println(" Address : ----------> " + address);
+			});
+		});
+	}
+	
+}
+
+TrustManager[] trustAllCerts = new TrustManager[]{
+new X509TrustManager() {
+    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+        return null;
+    }
+    public void checkClientTrusted(
+        java.security.cert.X509Certificate[] certs, String authType) {
+    }
+    public void checkServerTrusted(
+        java.security.cert.X509Certificate[] certs, String authType) {
+    }
+}};
+
+   try {
+    SSLContext sc = SSLContext.getInstance("SSL");
+    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    } catch (Exception e) {
+    }
+
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;com.apexdrop.jewellery.shopUsa&apos; to &apos;DirectoryListings&apos;&#x0A;- Original project: &apos;ApexDrop&apos;&#x0A;- Original element: &apos;com.apexdrop.jewellery.shopUsa&apos;&#x0A;- Renamed element: &apos;com.apexdrop.jewellery.DirectoryListings&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;shopUsa&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;com.apexdrop.jewellery{shopUsa.java[shopUsa" matchStrategy="1" name="DirectoryListings" qualified="false" references="true" similarDeclarations="false" stamp="1520312359300" textual="false" version="1.0"/>
+</session>

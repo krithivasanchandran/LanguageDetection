@@ -1,0 +1,30 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jsoup.nodes.Document;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class LaserQuest {
+
+	final static Set<String> locationurls = new HashSet<String>();
+final public static Set<GeoCodeEntityCarrierToExcelWriter> JumpZoneKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+public static void main(String args[]) throws IOException {
+	
+	String url = "http://www.jumpzoneparty.com/www.jumpzoneparty.com/Indoor-Inflatable-Locations-for-Jump-Zone.php";
+	String root = "http://www.jumpzoneparty.com/www.jumpzoneparty.com/";
+	final String country = "US";
+
+	AtomicInteger count = new AtomicInteger(0);
+	Document doc = ScraperLogic.Scraper.fetchHtmlContents(url);
+
+	CommonUtils.checkDoc(doc, JumpZoneLocations.class);
+
+}

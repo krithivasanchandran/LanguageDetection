@@ -1,0 +1,183 @@
+package com.locdata.theatres.scraper;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.dataruvi.commons.unique.GenericUnique;
+import com.locdata.ajax.request.response.builder.AjaxResponseBuilder;
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.ingest.excel.ExcelReader;
+import com.locdata.theatres.entity.GolfTecResponse;
+import com.locdata.theatres.entity.GolfTecResponse.Center;
+
+/*
+ * API to hit all the locations :
+ * 
+ * https://wcms.golftec.com/loadmarkers_6.php?thelong=-95.3698028&thelat=29.7604267&scope=&pagever=&maptype=
+ *  
+ * Input GeoNames from the file stored. MASTERDATA 10,11 th column
+ * 
+ * 
+
+    {
+  "region_name": "Houston",
+  "region_path": "houston",
+  "centers": [
+    {
+      "thumb": "https://cdn.golftec.com/image-library/1348/Locations_hero_BG_2400x1300_NewBrandDay.jpg",
+      "position": {
+        "thelong": "-95.4313008",
+        "thelat": "29.7278523"
+      },
+      "icon": "https://cdn.golftec.com/images/map-pins/location_pin_icon_green_shadow_sm.png",
+      "message": "",
+      "cid": "1000000167",
+      "name": "Upper Kirby",
+      "distance": 4.3,
+      "street1": "",
+      "street2": "5110 Buffalo Speedway Suite 202 ",
+      "city": "Houston",
+      "state": "TX",
+      "country": "United States",
+      "phone": "832-426-5650",
+      "zip": "77005",
+      "link": "/golf-lessons/houston/upper-kirby"
+    },
+    {
+      "thumb": "https://cdn.golftec.com/image-library/1348/Locations_hero_BG_2400x1300_NewBrandDay.jpg",
+      "position": {
+        "thelong": "-95.4615033",
+        "thelat": "29.7428052"
+      },
+      "icon": "https://cdn.golftec.com/images/map-pins/location_pin_icon_green_shadow_sm.png",
+      "message": "",
+      "cid": "1000000020",
+      "name": "Houston Galleria",
+      "distance": 5.6,
+      "street1": "",
+      "street2": "5000 Westheimer Road Suite 150",
+      "city": "Houston",
+      "state": "TX",
+      "country": "United States",
+      "phone": "713-850-7555",
+      "zip": "77056",
+      "link": "/golf-lessons/houston/houston-galleria"
+    }
+ * 
+ */
+
+public class GolfTec {
+
+	private static final String FILE_NAME = "./temp/US.xls";
+	static final HashSet<GenericUnique> collectDataUnique = new HashSet<GenericUnique>();
+	static final Set<String> duplicatehunter = new HashSet<String>();
+	
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+
+		int sheetNumber = 0;
+		int count = 0;
+		Iterator<Row> iterator = ExcelReader.excelRead(FILE_NAME, sheetNumber);
+
+		if (iterator == null)
+			System.exit(0);
+
+		while (iterator.hasNext()) {
+
+			Row currentRow = iterator.next();
+			Iterator<Cell> cellIterator = currentRow.iterator();
+			double latitude = 0;
+			double longitude = 0;
+
+			/*
+			 * Excel Reader for Geo Names Postal Code
+			 */
+
+			while (cellIterator.hasNext()) {
+
+				Cell currentCell = cellIterator.next();
+
+				if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
+
+					if (currentCell.getColumnIndex() == 9) {
+						latitude = currentCell.getNumericCellValue();
+						System.out.println(" Latitude ---------> " + latitude);
+					}
+					if (currentCell.getColumnIndex() == 10) {
+						longitude = currentCell.getNumericCellValue();
+						System.out.println(" Longitude ---------> " + longitude);
+					}
+				}
+			}
+			if (latitude != 0.0 && longitude != 0.0) {
+				String sURL = "https://wcms.golftec.com/loadmarkers_6.php?thelong=" + longitude + "8&thelat=" + latitude
+						+ "+&scope=&pagever=&maptype=";
+				System.out.println(" URL  " + sURL);
+				final GeoCodeEntityCarrierToExcelWriter responsebean = new GeoCodeEntityCarrierToExcelWriter();
+				HttpURLConnection requestBuilder = AjaxResponseBuilder.generateRequest(sURL, 60000);
+
+				if (requestBuilder != null) {
+					requestBuilder.connect();
+					if (requestBuilder.getContent() != null) {
+
+						StringBuilder builder = new StringBuilder();
+						BufferedReader br = new BufferedReader(
+								new InputStreamReader((requestBuilder.getInputStream())));
+
+						String output;
+						System.out.println("Recieved Back From the Server .... \n");
+						while ((output = br.readLine()) != null) {
+							builder.append(output);
+						}
+
+						System.out.println(builder.toString());
+
+						ObjectMapper mapper = new ObjectMapper();
+
+						GolfTecResponse golfresponse = mapper.readValue(builder.toString(), GolfTecResponse.class);
+
+						String regionname = golfresponse.getRegionName();
+						ArrayList<Center> centers = golfresponse.getCenters();
+						System.out.println(" REGION NAME =============================> " + regionname);
+						
+						if(regionname != null && golfresponse.getRegionPath() != null){
+							for (Center c : centers) {
+								String r = c.getStreet1().concat(c.getStreet2()).concat(c.getZip()).concat(c.getState())
+										.concat(c.getCity()).concat(c.getCountry());
+								if(!duplicatehunter.contains(r)){
+									duplicatehunter.add(r);
+									collectDataUnique.add(new GenericUnique(c.getCid(),c.getStreet1(), c.getStreet2(), c.getCity() ,c.getZip(),c.getState(),c.getCountry(),
+											c.getPhone(), c.getLink()));
+								}
+								System.out.println(" VALUE =============================> " + r);
+								System.out.println(" REGION NAME =============================> " + regionname);
+							}
+						}
+					}
+				}
+				requestBuilder.disconnect();
+			}
+			if(count == 1000) break;
+			count++;
+		}
+		System.out.println(" Size in the set is " + collectDataUnique.size());
+		for(GenericUnique c : collectDataUnique){
+			String r = c.getStreet1().concat(c.getStreet2()).concat(c.getZip()).concat(c.getState())
+					.concat(c.getCity()).concat(c.getCountry());
+			System.out.println(" FINAL UNIQUE LIST VLAUES  =============================> " + r);
+		}
+	}
+}

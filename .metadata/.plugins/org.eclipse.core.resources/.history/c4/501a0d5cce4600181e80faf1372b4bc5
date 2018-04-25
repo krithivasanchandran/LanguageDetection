@@ -1,0 +1,58 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class JumpStreetTrampoline {
+
+	public static Set<GeoCodeEntityCarrierToExcelWriter> jumpStreetKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+
+		String parentUrl = "http://www.gotjump.com/locations/";
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+		CommonUtils.checkDoc(doc, JumpStreetTrampoline.class);
+
+		doc.select("div#map_sidebar").forEach((t) -> {
+			t.select(".results_wrapper").forEach((j) -> {
+				String storename = j.select(".location_name").text();
+				j.select(".results_row_center_column.location_secondary").forEach((s) -> {
+					final GeoCodeEntityCarrierToExcelWriter apiresponse = new GeoCodeEntityCarrierToExcelWriter();
+					String address = s.select(".slp_result_address slp_result_street").text();
+					address.concat(s.select("span[itemprop=addressLocality]").text());
+					address.concat(s.select("span[itemprop=addressRegion]").text());
+					address.concat(s.select("span[itemprop=postalCode]").text());
+					String phone = s.select("a[href=tel:]").text();
+					apiresponse.setPhoneNumber(phone);
+					System.out.println("Store name " + storename + " Address :: " + address + " Phone " + phone);
+					try {
+						new GeoCodingApi(apiresponse.getAddress(), apiresponse);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					studioMovieGrillsKeyDataSet.add(apiresponse);
+				});
+			});
+		});
+
+		try {
+			SheetLocalWriter.writeXLSXFile("studioMovieGrillEntertainment.xlsx", studioMovieGrillsKeyDataSet);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+
+}

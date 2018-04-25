@@ -1,0 +1,218 @@
+package com.apexdrop.jewellery;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+public class DirectoryListings {
+	
+	public static void main(String args[]){
+		Set<String> masterVisitedList = new HashSet<String>();
+		List<BusinessCard> masterData = new ArrayList<>();
+		
+		try{
+		
+		Document document = Jsoup.connect("https://connect.data.com/")
+				.userAgent(
+						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
+				.timeout(30000)
+				.maxBodySize(0)
+				.followRedirects(true)
+				.ignoreContentType(true)
+				.get();
+		
+		LinkedList<String> alphabe = new LinkedList<String>();
+		LinkedList<String> firstlevel = new LinkedList<String>();
+		LinkedList<String> secondlevel = new LinkedList<String>();
+		LinkedList<String> finalList = new LinkedList<String>();
+
+		Elements businessDirectories = document.select(".seoRightColumn");
+		
+		businessDirectories.stream().forEach((t) -> {
+			
+			Elements fp = t.getElementsByTag("p");
+			Elements e = fp.first().select("a");
+			for(Element d : e){
+				String link = d.attr("href");
+				alphabe.add("https://connect.data.com".concat(link));
+			}
+		});
+		
+		// 1st child Elements
+		alphabe.forEach((r) -> {
+		
+			try {
+				Document doc = Jsoup.connect(r)
+						.userAgent(
+								"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36")
+						.timeout(30000)
+						.maxBodySize(0)
+						.followRedirects(true)
+						.ignoreContentType(true)
+						.get();
+				
+				Elements r1 = doc.select(".seo-column");
+				for(Element w : r1){
+					Elements q = w.select("ul > li");
+					for(Element v : q){
+						String link = v.select("a").attr("href");
+						System.out.println(link);
+						firstlevel.add("https://connect.data.com".concat(link));
+					}
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		});
+		
+		
+		for(String str : firstlevel){
+			
+			try {
+				Document doc_1 = Jsoup.connect(str)
+						.userAgent(
+								"Mozilla")
+						.timeout(30000)
+						.maxBodySize(0)
+						.followRedirects(true)
+						.ignoreContentType(true)
+						.get();
+				
+				Elements r2 = doc_1.select(".seo-column");
+				for(Element w : r2){
+					Elements q = w.select("ul > li");
+					for(Element v : q){
+						String link = v.select("a").attr("href");
+						System.out.println(link);
+						secondlevel.add("https://connect.data.com".concat(link));
+					}
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		System.out.println(" Size of the list ---> " + secondlevel.size());
+	
+		
+		for(String h : secondlevel){
+			if(finalList.size() > 1000){
+				break;
+			}
+			try {
+				Document doc_2 = Jsoup.connect(h)
+						.userAgent(
+								"Mozilla")
+						.timeout(30000)
+						.maxBodySize(0)
+						.followRedirects(true)
+						.ignoreContentType(true)
+						.get();
+				
+				Elements r1 = doc_2.select(".seo-column");
+				for(Element w : r1){
+					Elements q = w.select("ul > li");
+					for(Element v : q){
+						String link = v.select("a").attr("href");
+						System.out.println(" final level "+ link);
+						finalList.add("https://connect.data.com".concat(link));
+					}
+				}
+			} catch (Exception e) {
+				System.out.println(" Exception thrown fetching URL ");
+			}
+		}
+		
+		BufferedWriter writer_end = new BufferedWriter(new FileWriter("./temp/output.txt", true));
+		
+		for(String p : finalList){
+			System.out.println(p);
+			writer_end.write(p);
+			writer_end.write(",");
+			writer_end.newLine();
+			Document doc_3 = Jsoup.connect(p)
+					.userAgent(
+							"Mozilla")
+					.timeout(30000)
+					.maxBodySize(0)
+					.followRedirects(true)
+					.ignoreContentType(true)
+					.get();
+			
+			Elements fe = doc_3.select(".businesscard-contactinfo");
+			for(Element e : fe){
+			    BusinessCard bcard = new BusinessCard();
+				String PersonName = e.select(".businesscard-contactinfo-name").text();
+				bcard.setPersonName(PersonName);
+				String Designation = e.select(".businesscard-contactinfo-title").text();
+				bcard.setDesignation(Designation);
+				String businessWebsite = "https://connect.data.com"+e.select(".businesscard-companyinfo-name").first().getElementsByTag("a").attr("href");
+				bcard.setWebsite(businessWebsite);
+				bcard = getBusinessInformation(businessWebsite,bcard);
+				String businessName = e.select(".businesscard-companyinfo-name").first().getElementsByTag("a").text();
+				bcard.setBusinessName(businessName);
+				String address1 = e.select(".businesscard-companyinfo-addressline").text();
+				String cityzip = e.select(".businesscard-companyinfo-citystatezip").text();
+				String country = e.select(".businesscard-companyinfo-country").text();
+				System.out.println(" Person ::: " + PersonName);
+				System.out.println(" Designation ::: " + Designation);
+				System.out.println(" Website :::: " + businessWebsite);
+				System.out.println(" Address ::: " + address1.concat("  ").concat(cityzip).concat("  ").concat(country));
+				bcard.setAddress(address1.concat("  ").concat(cityzip).concat("  ").concat(country));
+				masterData.add(bcard);
+			}
+		}
+		
+		writer_end.close();
+		
+		ExcelHelper.writeXLSXFile("PersonContactInfo.xlsx", masterData);
+		
+
+		}catch(Exception ex){
+			System.out.println(ex.getMessage());
+		}
+	}
+	
+	private static BusinessCard getBusinessInformation(String url , BusinessCard clonebcard) {
+		
+		try{
+		Document reeldoc = Jsoup.connect(url)
+				.userAgent(
+						"Mozilla")
+				.timeout(30000)
+				.maxBodySize(0)
+				.followRedirects(true)
+				.ignoreContentType(true)
+				.get();
+		
+		String headquartersAddress = reeldoc.select(".seo-company-data").get(2).text();
+		headquartersAddress = headquartersAddress.replace("map", "");
+		clonebcard.setHeadquartersAddress(headquartersAddress);
+	
+		String phone = reeldoc.select(".seo-company-data").get(3).text();
+		clonebcard.setPhone(phone);
+	
+		String Industries = reeldoc.select(".seo-company-data").get(4).text();
+		clonebcard.setIndustries(Industries);
+	
+		String employees = reeldoc.select(".seo-company-data").get(5).text();
+		clonebcard.setEmployees(employees);
+	
+		String companyrevenue = reeldoc.select(".seo-company-data").get(6).text();
+		clonebcard.setCompanyrevenue(companyrevenue);
+		
+		}catch(IOException ex){
+			System.out.println(ex.getMessage());
+		}
+		return clonebcard;
+	}
+}

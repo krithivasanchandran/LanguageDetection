@@ -1,0 +1,141 @@
+package com.dataruvi.automotive.carrentals;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+/*
+ * Alamo Car Rentals : Step 1: Collect all the URL's for USA falling unders USA bracket.
+ * 
+ */
+
+public class AlamoCarRentals {
+
+	public static Set<GeoCodeEntityCarrierToExcelWriter> alamoRentalsKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+	final static Set<String> parentPageSeed = new HashSet<String>();
+	final static Set<String> allAirportsSeeds = new HashSet<String>();
+
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+
+		String parentUrl = "https://www.alamo.com/en_US/car-rental/locations/top-destinations.html";
+		String root = "https://www.alamo.com";
+
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+		CommonUtils.checkDoc(doc, AlamoCarRentals.class);
+
+		doc.select("div#content").forEach((t) -> {
+			t.select(".content.parsys").forEach((m) -> {
+				m.select(".parsys_column.cq-colctrl-col2rwd").forEach((j) -> {
+					j.select(".parsys_column.cq-colctrl-col2rwd-c0").forEach((s) -> {
+						s.select("p").forEach((v) -> {
+							String storename = v.select("a b").text();
+							if (storename.contains("(Search All Locations)")) {
+								String href = v.select("a").attr("href");
+								href = root.concat(href);
+								parentPageSeed.add(href);
+							}
+						});
+					});
+
+					j.select(".parsys_column.cq-colctrl-col2rwd-c1").forEach((s) -> {
+						s.select("p").forEach((v) -> {
+							String storename = v.select("a b").text();
+							if (storename.contains("(Search All Locations)")) {
+								String href = v.select("a").attr("href");
+								href = root.concat(href);
+								parentPageSeed.add(href);
+							}
+						});
+					});
+				});
+			});
+		});
+
+		// There are 2 kinds of html page from crawling the parent url
+
+		System.out.println(" ---------------------------> " + parentPageSeed.size());
+
+		parentPageSeed.forEach((x) -> {
+			System.out.println(" Now Crawling Seed !! ---------> " + x);
+
+			Document d = ScraperLogic.Scraper.fetchHtmlContents(x);
+			CommonUtils.checkDoc(d, AlamoCarRentals.class);
+
+			if (x.contains("location-results.html") && x.contains("country=") && x.contains("state=")) {
+
+				d.select(
+						"tbody#_content_alamo_en_US_car_rental_locations_location_results_jcr_content_content_result_location_email")
+						.forEach((g) -> {
+					g.select(".row").forEach((z) -> {
+						String details = z.select(".viewDetailsBtn.bigBabyPointer").attr("href");
+						details = root.concat(details);
+						System.out.println(" Airport Rental " + details);
+						allAirportsSeeds.add(details);
+					});
+				});
+			} else {
+				// https://www.alamo.com/en_US/car-rental/locations/us/california.html
+				d.select("div#locations-results").forEach((action) -> {
+					action.select("table[role=presentation]").forEach((n) -> {
+						String funky = n.select("tbody").attr("id");
+						System.out.println(
+								" GOTCHAAAAAAAAAA ===========####################################>>>>>>>>> " + funky);
+						n.select("tbody#" + funky).forEach((g) -> {
+							g.select(".row").forEach((z) -> {
+								String details = z.select(".viewDetailsBtn.bigBabyPointer").attr("href");
+								details = root.concat(details);
+								// Very important concatenating the store number to the seed url separated by ### eg: www.example.com/locations/us/newyork###1231
+								String str = z.select("a").attr("data-station-id");
+								details = details.concat("###"+z.select("a").attr("data-station-id"));
+								System.out.println(" Airport Rental " + details);
+								allAirportsSeeds.add(details);
+							});
+						});
+					});
+				});
+			}
+		});
+		System.out.println(" Total Number of alamo locations in usa is " + allAirportsSeeds.size());
+		
+		allAirportsSeeds.forEach((b) -> {
+			
+			String parsedURL = b.split("###")[0];
+			String storenumber = b.split("###")[1];
+			
+			Document docs = ScraperLogic.Scraper.fetchHtmlContents(parsedURL);
+			CommonUtils.checkDoc(docs, AlamoCarRentals.class);
+			
+			docs.select(".location-address-and-hours").forEach((m) -> {
+					
+					System.out.println(" Store number ==================================> " + storenumber);
+					
+					String locationName = m.select(".location-name h2").text();
+					System.out.println(" Location name  ---------------> " + locationName);
+					
+					String address = m.select(".location-address-link").text();
+					System.out.println(" Address name  ---------------> " + address);
+
+					String phone = m.select(".phone-number").text();
+					phone = phone.replace("Opens in new application", "");
+					System.out.println(" Phone number  ---------------> " + phone);
+					
+					String hours = m.select("table.locations-hours.hours-container").text();
+					System.out.println(" Hours  ---------------> " + hours);
+					
+					String services = m.select(".services .twist .dt").text();
+					System.out.println(" services  ---------------> " + services);
+
+			});
+		});
+	}
+}

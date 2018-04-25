@@ -82,5 +82,7 @@
 	<classpathentry kind="lib" path="/Users/krichandran/Desktop/sheets/google-api-services-sheets-v4-rev500-1.23.0.jar"/>
 	<classpathentry kind="lib" path="/Users/krichandran/Downloads/jedis-2.9.0.jar"/>
 	<classpathentry kind="lib" path="/Users/krichandran/Downloads/libphonenumber-8.8.9.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/stanford-ner-2017-06-09/stanford-ner-3.8.0.jar"/>
+	<classpathentry kind="lib" path="/Users/krichandran/Desktop/stanford-ner-2017-06-09/stanford-ner.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

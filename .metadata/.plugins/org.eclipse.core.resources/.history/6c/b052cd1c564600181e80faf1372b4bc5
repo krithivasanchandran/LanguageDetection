@@ -1,0 +1,64 @@
+package com.locdata.theatres.scraper;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jsoup.nodes.Document;
+
+import com.locdata.geocoding.google.service.GeoCodeEntityCarrierToExcelWriter;
+import com.locdata.geocoding.google.service.GeoCodingApi;
+import com.locdata.google.api.sheetsWriter.SheetLocalWriter;
+import com.locdata.scraper.main.ScraperLogic;
+import com.locdata.utils.common.CommonUtils;
+
+public class Theatres_StudioMovieGrill {
+	
+	public static Set<GeoCodeEntityCarrierToExcelWriter> studioMovieGrillsKeyDataSet = new HashSet<GeoCodeEntityCarrierToExcelWriter>();
+
+	public static void main(String args[]) throws EncryptedDocumentException, InvalidFormatException, IOException,
+			InterruptedException, InstantiationException, IllegalAccessException {
+		
+		String parentUrl = "https://www.studiomoviegrill.com/Locations";
+		
+		Document doc = ScraperLogic.Scraper.fetchHtmlContents(parentUrl);
+		CommonUtils.checkDoc(doc, UrbanAirTrampolineParks.class);
+
+		doc.select("ul#location-list").forEach((t) -> {
+			t.select("li").forEach((m) -> {
+				m.select(".location-box").forEach((j) -> {
+					j.select(".info").forEach((s) -> {
+						final GeoCodeEntityCarrierToExcelWriter apiresponse = new GeoCodeEntityCarrierToExcelWriter();
+						String storename = s.select("span[itemprop=name]").text();
+						apiresponse.setStorename(storename);
+						String address = s.select("a").text();
+						address.concat(s.select("span[itemprop=addressLocality]").text());
+						address.concat(s.select("span[itemprop=addressRegion]").text());
+						address.concat(s.select("span[itemprop=postalCode]").text());
+						apiresponse.setAddress(address);
+						String phone = s.select("span[itemprop=telephone]").text();
+						apiresponse.setPhoneNumber(phone);
+						System.out.println("Store name "+ storename + " Address :: " + address + " Phone " + phone);
+						if(!storename.contains("Trampoline Park Bristol")){
+							try {
+								new GeoCodingApi(apiresponse.getStorename()+apiresponse.getAddress(), apiresponse);
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+						   urbanAirTrampolineKeyDataSet.add(apiresponse);	
+						}
+					});
+				});
+			});
+		});
+		
+		try {
+			SheetLocalWriter.writeXLSXFile("urbanAirTrampolineEntertainment.xlsx", urbanAirTrampolineKeyDataSet);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+
+}

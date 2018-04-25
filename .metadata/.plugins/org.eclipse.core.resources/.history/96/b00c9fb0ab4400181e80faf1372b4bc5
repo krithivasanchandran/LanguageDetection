@@ -1,0 +1,141 @@
+package com.locdata.theatres.entity;
+
+import java.util.ArrayList;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true )
+public class GolfTecResponse {
+	
+	  @JsonProperty("region_name")
+	  private String region_name;
+
+	  public String getRegionName() { return this.region_name; }
+
+	  public void setRegionName(String region_name) { this.region_name = region_name; }
+
+	  @JsonProperty("region_path")
+	  private String region_path;
+
+	  public String getRegionPath() { return this.region_path; }
+
+	  public void setRegionPath(String region_path) { this.region_path = region_path; }
+
+	  private ArrayList<Center> centers;
+
+	  public ArrayList<Center> getCenters() { return this.centers; }
+
+	  public void setCenters(ArrayList<Center> centers) { this.centers = centers; }
+
+	@JsonIgnoreProperties(ignoreUnknown = true )
+	public static class Position
+	{
+	  private String thelong;
+
+	  public String getThelong() { return this.thelong; }
+
+	  public void setThelong(String thelong) { this.thelong = thelong; }
+
+	  private String thelat;
+
+	  public String getThelat() { return this.thelat; }
+
+	  public void setThelat(String thelat) { this.thelat = thelat; }
+	}
+	
+	@JsonIgnoreProperties(ignoreUnknown = true )
+	public static class Center
+	{
+	  private String thumb;
+
+	  public String getThumb() { return this.thumb; }
+
+	  public void setThumb(String thumb) { this.thumb = thumb; }
+
+	  private Position position;
+
+	  public Position getPosition() { return this.position; }
+
+	  public void setPosition(Position position) { this.position = position; }
+
+	  private String icon;
+
+	  public String getIcon() { return this.icon; }
+
+	  public void setIcon(String icon) { this.icon = icon; }
+
+	  private String message;
+
+	  public String getMessage() { return this.message; }
+
+	  public void setMessage(String message) { this.message = message; }
+
+	  private String cid;
+
+	  public String getCid() { return this.cid; }
+
+	  public void setCid(String cid) { this.cid = cid; }
+
+	  private String name;
+
+	  public String getName() { return this.name; }
+
+	  public void setName(String name) { this.name = name; }
+
+	  private double distance;
+
+	  public double getDistance() { return this.distance; }
+
+	  public void setDistance(double distance) { this.distance = distance; }
+
+	  private String street1;
+
+	  public String getStreet1() { return this.street1; }
+
+	  public void setStreet1(String street1) { this.street1 = street1; }
+
+	  private String street2;
+
+	  public String getStreet2() { return this.street2; }
+
+	  public void setStreet2(String street2) { this.street2 = street2; }
+
+	  private String city;
+
+	  public String getCity() { return this.city; }
+
+	  public void setCity(String city) { this.city = city; }
+
+	  private String state;
+
+	  public String getState() { return this.state; }
+
+	  public void setState(String state) { this.state = state; }
+
+	  private String country;
+
+	  public String getCountry() { return this.country; }
+
+	  public void setCountry(String country) { this.country = country; }
+
+	  private String phone;
+
+	  public String getPhone() { return this.phone; }
+
+	  public void setPhone(String phone) { this.phone = phone; }
+
+	  private String zip;
+
+	  public String getZip() { return this.zip; }
+
+	  public void setZip(String zip) { this.zip = zip; }
+
+	  private String link;
+
+	  public String getLink() { return this.link; }
+
+	  public void setLink(String link) { this.link = link; }
+	}
+
+}

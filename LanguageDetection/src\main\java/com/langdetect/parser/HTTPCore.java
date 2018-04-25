@@ -24,14 +24,17 @@ public class HTTPCore {
 		 CloseableHttpClient httpclient = HttpClients.createDefault();
 		 
 		 RequestConfig requestConfig = RequestConfig.custom()
-			        .setSocketTimeout(8000)
-			        .setConnectTimeout(8000)
+			        .setSocketTimeout(10000)
+			        .setConnectTimeout(10000)
 			        .build();
 		 
 		 HttpGet getRequest = new HttpGet(url);
 		 getRequest.setConfig(requestConfig);
 		 
 		 response = httpclient.execute(getRequest);
+		 
+		 if(response.getStatusLine().getStatusCode() == 301 || response.getStatusLine().getStatusCode() == 302) return false;
+		 
 		 return (response.getStatusLine().getStatusCode() == 200);
 		}catch(Exception ex){
 			System.out.println(ex.getMessage());

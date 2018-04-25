@@ -35,7 +35,7 @@ import com.locdata.theatres.entity.EntityTheatre;
    Country
    Country Code
    County
-   Still Pending : Phone number -- To be retreived from google
+   Still Pending : Phone number -- To be retreived from google places
   
  */
 
